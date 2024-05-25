@@ -8,8 +8,9 @@ from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QRadi
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt, QSize, QTranslator, QLocale, QLibraryInfo
 from PIL import Image
-import lib
 from MainWindow import Ui_MotionFrame
+from pathlib import Path
+import lib
 
 class MotionFrameApp(QMainWindow, Ui_MotionFrame):
     def __init__(self):
@@ -31,9 +32,12 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.radio_button_language_english.toggled.connect(lambda: self.change_language('en'))
         self.radio_button_language_japanese.toggled.connect(lambda: self.change_language('ja'))
 
+    def _get_path_qm(self, lang):
+        return (Path(__file__).parent / f"./translation/motionframe_{lang}.qm").absolute().as_posix()
+
     def _load_translator(self):
         if self.language == 'ja':
-            self.translator.load('translation/motionframe_ja.qm')
+            self.translator.load(self._get_path_qm(self.language))
             app.installTranslator(self.translator)
 
     def change_language(self, language):
@@ -42,7 +46,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
             if language == 'en':
                 app.removeTranslator(self.translator)
             else:
-                self.translator.load('translation/motionframe_ja.qm')
+                self.translator.load(self._get_path_qm(self.language))
                 app.installTranslator(self.translator)
             self.retranslateUi(self)
 
