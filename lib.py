@@ -4,24 +4,26 @@ import numpy as np
 import imageio.v3 as imageio
 
 class EncodeResult:
-    def __init__(self, color_atlas, motion_atlas, flow_directions, strength_u, strength_v):
+    def __init__(self, color_atlas, motion_atlas, flow_directions, strength):
         self.color_atlas = color_atlas
         self.motion_atlas = motion_atlas
         self.flow_directions = flow_directions
-        self.strength_u = strength_u
-        self.strength_v = strength_v
+        self.strength = strength
 
 def calculate_required_frames(frames, frame_skip):
     return (frames // (frame_skip + 1)) + min(frames % (frame_skip + 1), 1)
 
-def encode_atlas(frames, atlas_width, atlas_height, frame_skip):
+def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale):
     color_atlas = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
-    motion_atlas, flow_directions, max_u, max_v = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip)
+    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip)
 
-    strength_u = 1.0 / max_u if max_u != 0 else 0
-    strength_v = 1.0 / max_v if max_v != 0 else 0
+    motion_scale = min(max(motion_scale, 0.01), 1.0)
+    if motion_scale < 1.0:
+        motion_atlas = cv2.resize(motion_atlas, None, fx=motion_scale, fy=motion_scale)
 
-    return EncodeResult(color_atlas, motion_atlas, flow_directions, strength_u, strength_v)
+    strength = 1.0 / max_strength if max_strength != 0 else 0
+
+    return EncodeResult(color_atlas, motion_atlas, flow_directions, strength)
 
 def load_frames(pattern):
     frames = []
@@ -76,7 +78,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip):
 
     flow_directions = np.zeros_like(motion_atlas)  # Image for motion vector directions
 
-    max_u, max_v = 0, 0
+    max_strength = 0
     idx = 1
     atlas_idx = 0
 
@@ -109,11 +111,11 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip):
             break
 
         flow = _accumulate_displacement(frame_batch)
-        max_u = max(max_u, np.abs(flow[..., 0]).max())
-        max_v = max(max_v, np.abs(flow[..., 1]).max())
+        max_strength = max(max_strength, np.abs(flow[..., 0]).max())
+        max_strength = max(max_strength, np.abs(flow[..., 1]).max())
 
-        norm_flow_u = (flow[..., 0] / (2 * max_u) + 0.5) * 255
-        norm_flow_v = (-flow[..., 1] / (2 * max_v) + 0.5) * 255
+        norm_flow_u = (flow[..., 0] / (2 * max_strength) + 0.5) * 255
+        norm_flow_v = (-flow[..., 1] / (2 * max_strength) + 0.5) * 255
 
         mask = np.zeros([height, width, 3], dtype=np.uint8)
         mask[..., 2] = norm_flow_u.astype(np.uint8)
@@ -127,7 +129,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip):
 
         atlas_idx += 1
 
-    return motion_atlas, flow_directions, max_u, max_v
+    return motion_atlas, flow_directions, max_strength
 
 def _draw_optical_flow(flow, image, to_image, scale=1, step=16):
     h, w = image.shape[:2]
