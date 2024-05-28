@@ -97,7 +97,7 @@ def _encode_motion_vector_sidefx_labs(flow, max_strength):
     # Calculate the magnitude and angle of the flow vectors
     magnitude = np.sqrt(flow[..., 0]**2 + flow[..., 1]**2)
     # Clear tiny vector
-    #magnitude[magnitude < 1e-6] = 0
+    magnitude[magnitude < 1e-6] = 0
 
     angle = np.arctan2(flow[..., 1], flow[..., 0])  # range [-pi, pi]
 
@@ -137,8 +137,10 @@ def _encode_motion_vector(method, flow, max_strength):
 def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding):
     height, width = frames[0].shape[:2]
     motion_atlas = np.zeros([atlas_height * height, atlas_width * width, 3], dtype=np.uint8)
-    motion_atlas[:,:,1] = 127
-    motion_atlas[:,:,2] = 127
+
+    if motion_vector_encoding != MotionVectorEncoding.SIDEFX_LABS_R8G8:
+        motion_atlas[:,:,1] = 127
+        motion_atlas[:,:,2] = 127
 
     flow_directions = np.zeros_like(motion_atlas)  # Image for motion vector directions
 
