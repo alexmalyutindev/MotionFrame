@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import os
 import cv2
 import numpy as np
@@ -17,7 +18,6 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         super(MotionFrameApp, self).__init__()
         self.setupUi(self)
 
-        #super().__init__()
         self.setWindowTitle('MotionFrame')
         self.language = 'en'
         self.directory = None
@@ -28,6 +28,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.button_directory_browse.clicked.connect(self.select_directory)
         self.button_generate.clicked.connect(self.start_processing)
         self.button_copy_motion_strength.clicked.connect(self.copy_motion_strength)
+        self.button_save.clicked.connect(self.save_results)
 
         self.radio_button_language_english.toggled.connect(lambda: self.change_language('en'))
         self.radio_button_language_japanese.toggled.connect(lambda: self.change_language('ja'))
@@ -147,7 +148,9 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
             QMessageBox.critical(self, self.tr('Error'), error_message)
             return
 
-        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale)
+        motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())
+
+        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding )
 
         self.display_image(self.result.color_atlas, self.label_color_atlas_image)
         self.display_image(self.result.motion_atlas, self.label_motion_vector_image)
@@ -157,20 +160,26 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.text_motion_strength.setText(f"{self.result.strength:.8f}")
         self.label_discarded_trailing_frames_value.setText(str(discarded_frames))
 
-    def display_image(self, image, label):
+    def bgr_to_rgb(self, image):
         channels = lib.channel_count(image)
 
         if channels == 3 or channels == 4:
             image_copy = np.zeros_like(image)
-            # RGB to BGR conversion
+            # BGR to RGB conversion
             if channels == 3:
                 image_copy[..., [0, 1, 2]] = image[..., [2, 1, 0]]
             elif channels == 4:
                 image_copy[..., [0, 1, 2, 3]] = image[..., [2, 1, 0, 3]]
             image = image_copy
 
-        height, width = image.shape[0], image.shape[1]
+        return image
 
+    def display_image(self, image, label):
+        channels = lib.channel_count(image)
+
+        image = self.bgr_to_rgb(image)
+
+        height, width = image.shape[0], image.shape[1]
         bytes_per_line = channels * width
         image_format = QImage.Format_RGBA8888
         if channels == 3:
@@ -186,11 +195,14 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         if not save_path:
             return
 
-        color_atlas_path = save_path + "_color_atlas.png"
-        motion_atlas_path = save_path + "_motion_atlas.png"
+        color_atlas_path = save_path + "_color_atlas.tga"
+        motion_atlas_path = save_path + "_motion_atlas.tga"
 
-        Image.fromarray(self.result.color_atlas).save(color_atlas_path)
-        Image.fromarray(self.result.motion_atlas).save(motion_atlas_path)
+        color_atlas = self.bgr_to_rgb(self.result.color_atlas)
+        motion_atlas = self.bgr_to_rgb(self.result.motion_atlas)
+
+        Image.fromarray(color_atlas).save(color_atlas_path)
+        Image.fromarray(motion_atlas).save(motion_atlas_path)
 
         QMessageBox.information(self, self.tr('Save'), self.tr('The results have been saved successfully.'))
 
