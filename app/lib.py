@@ -10,24 +10,25 @@ class MotionVectorEncoding(Enum):
     R16G16 = 2
 
 class EncodeResult:
-    def __init__(self, color_atlas, motion_atlas, flow_directions, strength):
+    def __init__(self, color_atlas, motion_atlas, flow_directions, strength, total_frames):
         self.color_atlas = color_atlas
         self.motion_atlas = motion_atlas
         self.flow_directions = flow_directions
         self.strength = strength
+        self.total_frames = total_frames
 
 def calculate_required_frames(frames, frame_skip):
     return (frames // (frame_skip + 1)) + min(frames % (frame_skip + 1), 1)
 
 def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding):
-    color_atlas = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
+    color_atlas, total_frames = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
     motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding)
 
     motion_scale = min(max(motion_scale, 0.01), 1.0)
     if motion_scale < 1.0:
         motion_atlas = cv2.resize(motion_atlas, None, fx=motion_scale, fy=motion_scale)
 
-    return EncodeResult(color_atlas, motion_atlas, flow_directions, max_strength)
+    return EncodeResult(color_atlas, motion_atlas, flow_directions, max_strength, total_frames)
 
 def load_frames(pattern):
     frames = []
@@ -72,7 +73,7 @@ def _create_color_atlas(frames, atlas_width, atlas_height, frame_skip):
         _blit_image(frames[i], color_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
         atlas_idx += 1
 
-    return color_atlas
+    return color_atlas, atlas_idx
 
 def _prepare_optical_flow_frame(frame):
     channels = channel_count(frame)

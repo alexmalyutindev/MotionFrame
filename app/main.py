@@ -150,6 +150,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         discarded_frames = len(frames) - ((lib.calculate_required_frames(len(frames), frame_skip) - 1) * (1 + frame_skip) - 1)
         self.text_motion_strength.setText(f"{self.result.strength:.8f}")
         self.label_discarded_trailing_frames_value.setText(str(discarded_frames))
+        self.label_total_frames_value.setText(str(self.result.total_frames))
 
     def bgr_to_rgb(self, image):
         channels = lib.channel_count(image)

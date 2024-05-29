@@ -297,20 +297,20 @@ class Ui_MotionFrame(object):
         self.label_motion_strength.setObjectName(u"label_motion_strength")
         self.label_motion_strength.setTextFormat(Qt.PlainText)
 
-        self.form_result.setWidget(2, QFormLayout.LabelRole, self.label_motion_strength)
+        self.form_result.setWidget(3, QFormLayout.LabelRole, self.label_motion_strength)
 
         self.label_discarded_trailing_frames = QLabel(self.central)
         self.label_discarded_trailing_frames.setObjectName(u"label_discarded_trailing_frames")
         self.label_discarded_trailing_frames.setTextFormat(Qt.PlainText)
 
-        self.form_result.setWidget(0, QFormLayout.LabelRole, self.label_discarded_trailing_frames)
+        self.form_result.setWidget(1, QFormLayout.LabelRole, self.label_discarded_trailing_frames)
 
         self.label_discarded_trailing_frames_value = QLabel(self.central)
         self.label_discarded_trailing_frames_value.setObjectName(u"label_discarded_trailing_frames_value")
         self.label_discarded_trailing_frames_value.setText(u"0")
         self.label_discarded_trailing_frames_value.setTextFormat(Qt.PlainText)
 
-        self.form_result.setWidget(0, QFormLayout.FieldRole, self.label_discarded_trailing_frames_value)
+        self.form_result.setWidget(1, QFormLayout.FieldRole, self.label_discarded_trailing_frames_value)
 
         self.layout_motion_strength = QHBoxLayout()
         self.layout_motion_strength.setObjectName(u"layout_motion_strength")
@@ -326,7 +326,18 @@ class Ui_MotionFrame(object):
         self.layout_motion_strength.addWidget(self.button_copy_motion_strength)
 
 
-        self.form_result.setLayout(2, QFormLayout.FieldRole, self.layout_motion_strength)
+        self.form_result.setLayout(3, QFormLayout.FieldRole, self.layout_motion_strength)
+
+        self.label_total_frames = QLabel(self.central)
+        self.label_total_frames.setObjectName(u"label_total_frames")
+
+        self.form_result.setWidget(0, QFormLayout.LabelRole, self.label_total_frames)
+
+        self.label_total_frames_value = QLabel(self.central)
+        self.label_total_frames_value.setObjectName(u"label_total_frames_value")
+        self.label_total_frames_value.setText(u"0")
+
+        self.form_result.setWidget(0, QFormLayout.FieldRole, self.label_total_frames_value)
 
 
         self.layout_right.addLayout(self.form_result)
@@ -375,6 +386,7 @@ class Ui_MotionFrame(object):
         self.label_motion_strength.setText(QCoreApplication.translate("MotionFrame", u"Motion Strength:", None))
         self.label_discarded_trailing_frames.setText(QCoreApplication.translate("MotionFrame", u"Discarded Trailing Frames:", None))
         self.button_copy_motion_strength.setText(QCoreApplication.translate("MotionFrame", u"Copy", None))
+        self.label_total_frames.setText(QCoreApplication.translate("MotionFrame", u"Total Frames:", None))
         self.button_save.setText(QCoreApplication.translate("MotionFrame", u"Save", None))
     # retranslateUi
 

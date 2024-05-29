@@ -429,7 +429,7 @@
       </item>
       <item>
        <layout class="QFormLayout" name="form_result">
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_motion_strength">
           <property name="text">
            <string>Motion Strength:</string>
@@ -439,7 +439,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="label_discarded_trailing_frames">
           <property name="text">
            <string>Discarded Trailing Frames:</string>
@@ -449,7 +449,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="1" column="1">
          <widget class="QLabel" name="label_discarded_trailing_frames_value">
           <property name="text">
            <string notr="true">0</string>
@@ -459,7 +459,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <layout class="QHBoxLayout" name="layout_motion_strength">
           <item>
            <widget class="QLineEdit" name="text_motion_strength">
@@ -476,6 +476,20 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_total_frames">
+          <property name="text">
+           <string>Total Frames:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_total_frames_value">
+          <property name="text">
+           <string notr="true">0</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
