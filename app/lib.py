@@ -99,18 +99,16 @@ def _encode_motion_vector_sidefx_labs(flow, max_strength):
     magnitude = np.sqrt(flow[..., 0]**2 + flow[..., 1]**2)
     # Clear tiny vector
     magnitude[magnitude < 1e-6] = 0
-
-    angle = np.arctan2(flow[..., 1], flow[..., 0])  # range [-pi, pi]
-
     # Normalize the magnitude to [0, 1]
     normalized_magnitude = magnitude / max_strength
 
+    # Convert from vector to angle
+    angle = np.arctan2(flow[..., 1], flow[..., 0])  # range [-pi, pi]
     # Map the angles to the range [0, 2*pi]
     normalized_angle = np.mod(angle, 2 * np.pi)
     normalized_angle[normalized_angle < 0] += 2 * np.pi
     # Normalize to the range [0, 1]
     normalized_angle = normalized_angle / (2 * np.pi)
-
     # Clear angle if vector magnitude is zero
     normalized_angle[magnitude == 0] = 0
 
@@ -143,6 +141,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
     height, width = frames[0].shape[:2]
     motion_atlas = np.zeros([atlas_height * height, atlas_width * width, 3], dtype=np.uint8)
 
+    # Zero motion vector is mid value except for SideFx Labs R8G8
     if motion_vector_encoding != MotionVectorEncoding.SIDEFX_LABS_R8G8:
         motion_atlas[:,:,1] = 127
         motion_atlas[:,:,2] = 127
@@ -151,6 +150,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
 
     max_strength = 0
     idx = 1
+    atlas_idx = 0
 
     flow_frames = []
 
@@ -188,10 +188,14 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
             max_strength = max(max_strength, np.abs(flow[..., 0]).max())
             max_strength = max(max_strength, np.abs(flow[..., 1]).max())
 
+        # Draw optical flow directions visualization
+        direction_image = _draw_optical_flow(flow, frame_batch[0], frame_batch[-1])
+        _blit_image(direction_image, flow_directions, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
+        atlas_idx += 1
+
         flow_frames.append(flow)
 
-    atlas_idx = 0
-    for flow in flow_frames:
+    for atlas_idx, flow in enumerate(flow_frames):
         r, g = _encode_motion_vector(motion_vector_encoding, flow, max_strength)
 
         mask = np.zeros([height, width, 3], dtype=np.uint8)
@@ -200,18 +204,15 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
 
         _blit_image(mask, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
 
-        # Draw optical flow directions visualization
-        direction_image = _draw_optical_flow(flow, frame_batch[0], frame_batch[-1])
-        _blit_image(direction_image, flow_directions, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
-
-        atlas_idx += 1
-
     return motion_atlas, flow_directions, max_strength
 
 def _draw_optical_flow(flow, image, to_image, scale=1, step=16):
     h, w = image.shape[:2]
     y, x = np.mgrid[step//2:h:step, step//2:w:step].reshape(2, -1).astype(int)
     fx, fy = flow[y, x].T
+
+    fx = fx * w
+    fy = fy * h
 
     # Create an empty image with 3 channels
     height, width = image.shape
