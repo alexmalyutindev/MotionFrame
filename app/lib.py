@@ -103,8 +103,12 @@ def _encode_motion_vector_sidefx_labs(flow, max_strength):
 
     # Normalize the magnitude to [0, 1]
     normalized_magnitude = magnitude / max_strength
-    # Map angle from [-pi, pi] to [0, 1]
-    normalized_angle = (angle + np.pi) / (2 * np.pi)
+
+    # Map the angles to the range [0, 2*pi]
+    normalized_angle = np.mod(angle, 2 * np.pi)
+    normalized_angle[normalized_angle < 0] += 2 * np.pi
+    # Normalize to the range [0, 1]
+    normalized_angle = normalized_angle / (2 * np.pi)
 
     # Clear angle if vector magnitude is zero
     normalized_angle[magnitude == 0] = 0
