@@ -54,13 +54,15 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
     def select_directory(self):
         directory = QFileDialog.getExistingDirectory(self, self.tr('Select Directory'))
 
-        if directory:
-            self.directory = directory
-            self.text_directory.setText(directory)
-            prefix, ext, zeros = self._detect_image_sequence_pattern()
-            self.text_file_prefix.setText(prefix)
-            self.text_extension.setText(ext)
-            self.number_sequence_digits.setValue(zeros)
+        if not directory:
+            return
+
+        self.directory = directory
+        self.text_directory.setText(directory)
+        prefix, ext, zeros = self._detect_image_sequence_pattern()
+        self.text_file_prefix.setText(prefix)
+        self.text_extension.setText(ext)
+        self.number_sequence_digits.setValue(zeros)
 
     def _detect_image_sequence_pattern(self):
         directory_path = self.directory
@@ -73,26 +75,15 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         pattern = re.compile(r'(.*?)(\d+)\.(\w+)$')
 
-        prefixes = []
-        numbers = []
-        extensions = []
-
         for image_file in image_files:
             match = pattern.match(image_file)
-            if match:
-                prefix, number, extension = match.groups()
-                prefixes.append(prefix)
-                numbers.append(number)
-                extensions.append(extension)
+            if not match:
+                continue
 
-        if not prefixes:
-            return None, None, None
+            prefix, number, extension = match.groups()
+            return prefix, extension, len(number)
 
-        common_prefix = prefixes[0]
-        extension = extensions[0]
-        number_of_zeros = len(numbers[0])
-
-        return common_prefix, extension, number_of_zeros
+        return None, None, None
 
     def copy_motion_strength(self):
         clipboard = QApplication.clipboard()
@@ -104,23 +95,23 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         if actual_frames <= expected_frames:
             return True, self.tr('Frames can fit into the atlas.')
+
+        excess_frames = actual_frames - expected_frames
+        if excess_frames == 1:
+            message = self.tr('1 frame won\'t fit into the atlas.')
         else:
-            excess_frames = actual_frames - expected_frames
-            if excess_frames == 1:
-                message = self.tr('1 frame won\'t fit into the atlas.')
-            else:
-                message = self.tr('%n frame(s) won\'t fit into the atlas.', '', excess_frames)
+            message = self.tr('%n frame(s) won\'t fit into the atlas.', '', excess_frames)
 
-            min_skip = 0
-            while lib.calculate_required_frames(total_frame_count, min_skip) > expected_frames:
-                min_skip += 1
+        min_skip = 0
+        while lib.calculate_required_frames(total_frame_count, min_skip) > expected_frames:
+            min_skip += 1
 
-            message += '\n'
-            message += self.tr('Try reducing the frame skip count or increasing the atlas size.')
-            message += '\n'
-            message += self.tr('Minimum frame skip required to fit the frames is %n.', '', min_skip)
+        message += '\n'
+        message += self.tr('Try reducing the frame skip count or increasing the atlas size.')
+        message += '\n'
+        message += self.tr('Minimum frame skip required to fit the frames is %n.', '', min_skip)
 
-            return False, message
+        return False, message
 
     def start_processing(self):
         if not self.directory:
@@ -163,20 +154,19 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
     def bgr_to_rgb(self, image):
         channels = lib.channel_count(image)
 
-        if channels == 3 or channels == 4:
-            image_copy = np.zeros_like(image)
-            # BGR to RGB conversion
-            if channels == 3:
-                image_copy[..., [0, 1, 2]] = image[..., [2, 1, 0]]
-            elif channels == 4:
-                image_copy[..., [0, 1, 2, 3]] = image[..., [2, 1, 0, 3]]
-            image = image_copy
+        if channels < 3:
+            return image
 
-        return image
+        image_copy = np.zeros_like(image)
+        # BGR to RGB conversion
+        if channels == 3:
+            image_copy[..., [0, 1, 2]] = image[..., [2, 1, 0]]
+        elif channels == 4:
+            image_copy[..., [0, 1, 2, 3]] = image[..., [2, 1, 0, 3]]
+        return image_copy
 
     def display_image(self, image, label):
         channels = lib.channel_count(image)
-
         image = self.bgr_to_rgb(image)
 
         height, width = image.shape[0], image.shape[1]
