@@ -98,7 +98,7 @@ def _encode_motion_vector_sidefx_labs(flow, max_strength):
     # Calculate the magnitude and angle of the flow vectors
     magnitude = np.sqrt(flow[..., 0]**2 + flow[..., 1]**2)
     # Clear tiny vector
-    magnitude[magnitude < 1e-6] = 0
+    magnitude[magnitude < 1e-8] = 0
     # Normalize the magnitude to [0, 1]
     normalized_magnitude = magnitude / max_strength
 

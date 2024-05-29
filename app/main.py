@@ -173,6 +173,8 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         height, width = image.shape[0], image.shape[1]
         bytes_per_line = channels * width
         image_format = QImage.Format_RGBA8888
+        if channels == 1:
+            image_format = QImage.Format_Grayscale8
         if channels == 3:
             image_format = QImage.Format_RGB888
 
