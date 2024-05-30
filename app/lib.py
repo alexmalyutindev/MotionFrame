@@ -149,44 +149,39 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
     flow_directions = np.zeros_like(motion_atlas)  # Image for motion vector directions
 
     max_strength = 0
-    idx = 1
+    frame_idx = 1
     atlas_idx = 0
 
     flow_frames = []
+    last_frame_batch = []
 
-    while idx < len(frames):
+    while frame_idx < len(frames):
         frame_batch = []
-        idx -= 1
+        frame_idx -= 1
 
         # Prepare frames for optical flow computation.
         # This includes skipped frames.
         for i in range(frame_skip + 2):
-            if idx >= len(frames):
+            if frame_idx >= len(frames):
                 break
 
-            current_frame = frames[idx]
+            current_frame = frames[frame_idx]
             prepared_frame = _prepare_optical_flow_frame(current_frame)
             frame_batch.append(prepared_frame)
 
-            idx += 1
+            frame_idx += 1
 
-        # Couldn't load enough frames for consistent displacement accumulation
+        # Couldn't load enough frames for consistent frame skips
         if len(frame_batch) != (frame_skip + 2):
             break
 
+        # Compute displacement
         flow = _accumulate_displacement(frame_batch)
-
         # Normalize the flow vectors based on image dimensions
-        normalized_flow = np.zeros_like(flow)
-        normalized_flow[..., 0] = np.clip(flow[..., 0] / width, -1, 1)
-        normalized_flow[..., 1] = np.clip(flow[..., 1] / height, -1, 1)
-        flow = normalized_flow
+        flow = _normalize_displacement(flow)
 
-        if motion_vector_encoding == MotionVectorEncoding.SIDEFX_LABS_R8G8:
-            max_strength = max(max_strength, np.sqrt(flow[..., 0]**2 + flow[..., 1]**2).max())
-        else:
-            max_strength = max(max_strength, np.abs(flow[..., 0]).max())
-            max_strength = max(max_strength, np.abs(flow[..., 1]).max())
+        # Update maximum motion strength
+        max_strength = _update_max_strength(flow, motion_vector_encoding, max_strength)
 
         # Draw optical flow directions visualization
         direction_image = _draw_optical_flow(flow, frame_batch[0], frame_batch[-1])
@@ -194,15 +189,42 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
         atlas_idx += 1
 
         flow_frames.append(flow)
+        last_frame_batch = frame_batch
 
+    # Generate final motion vector frame. The number of frames in flow_frames are one less than the color atlas frames now.
+    # This is because motion vector represents the motion between each color atlas frames, which means there is one less motion vector.
+    # However, one more motion vector frame is actually needed for the last color atlas frame to extrapolate back into the past for better rendering.
+    # It is possible to ask the artist to render extra frames at the end just for motion vector, but it is not an intuitive workflow.
+    # To make up the final frame, the motion vector is computed for the last frame batch but in reverse order, and flipping the direction.
+    frame_batch = last_frame_batch
+    frame_batch.reverse()
+
+    # Compute displacement
+    flow = _accumulate_displacement(frame_batch)
+    # Normalize the flow vectors based on image dimensions
+    flow = _normalize_displacement(flow)
+    # Flip the displacement direction
+    flow = -flow
+
+    # Update maximum motion strength
+    max_strength = _update_max_strength(flow, motion_vector_encoding, max_strength)
+
+    # Draw optical flow directions visualization
+    direction_image = _draw_optical_flow(flow, frame_batch[0], frame_batch[-1])
+    _blit_image(direction_image, flow_directions, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
+    atlas_idx += 1
+
+    flow_frames.append(flow)
+
+    # Encode motion to a texture
     for atlas_idx, flow in enumerate(flow_frames):
         r, g = _encode_motion_vector(motion_vector_encoding, flow, max_strength)
 
-        mask = np.zeros([height, width, 3], dtype=np.uint8)
-        mask[..., 2] = np.clip(r, 0, 255).astype(np.uint8)
-        mask[..., 1] = np.clip(g, 0, 255).astype(np.uint8)
+        motion_vector = np.zeros([height, width, 3], dtype=np.uint8)
+        motion_vector[..., 2] = np.clip(r, 0, 255).astype(np.uint8)
+        motion_vector[..., 1] = np.clip(g, 0, 255).astype(np.uint8)
 
-        _blit_image(mask, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
+        _blit_image(motion_vector, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
 
     return motion_atlas, flow_directions, max_strength
 
@@ -215,7 +237,7 @@ def _draw_optical_flow(flow, image, to_image, scale=1, step=16):
     fy = fy * h
 
     # Create an empty image with 3 channels
-    height, width = image.shape
+    height, width = image.shape[:2]
     vis = np.zeros((height, width, 3), dtype=np.uint8)
     vis[:, :, 2] = image  # Red channel
     vis[:, :, 1] = to_image  # Green channel
@@ -228,7 +250,7 @@ def _draw_optical_flow(flow, image, to_image, scale=1, step=16):
 def _blit_image(source, target, target_coords):
     channels = channel_count(source)
     x, y = target_coords
-    source_height, source_width = source.shape[0], source.shape[1]
+    source_height, source_width = source.shape[:2]
     if channels > 1:
         target[y:y+source_height, x:x+source_width, :] = source
     else:
@@ -249,4 +271,19 @@ def _accumulate_displacement(frames):
         accumulated_displacement[..., 0] += displacement_x
         accumulated_displacement[..., 1] += displacement_y
     return accumulated_displacement
+
+def _normalize_displacement(flow):
+    height, width = flow.shape[:2]
+    normalized_flow = np.zeros_like(flow)
+    normalized_flow[..., 0] = np.clip(flow[..., 0] / width, -1, 1)
+    normalized_flow[..., 1] = np.clip(flow[..., 1] / height, -1, 1)
+    return normalized_flow
+
+def _update_max_strength(flow, motion_vector_encoding, max_strength):
+    if motion_vector_encoding == MotionVectorEncoding.SIDEFX_LABS_R8G8:
+        max_strength = max(max_strength, np.sqrt(flow[..., 0]**2 + flow[..., 1]**2).max())
+    else:
+        max_strength = max(max_strength, np.abs(flow[..., 0]).max())
+        max_strength = max(max_strength, np.abs(flow[..., 1]).max())
+    return max_strength
 
