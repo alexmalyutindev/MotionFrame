@@ -157,6 +157,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
 
     while frame_idx < len(frames):
         frame_batch = []
+        # The final frame in the last frame batch will be the starting point for this batch, so go back by one
         frame_idx -= 1
 
         # Prepare frames for optical flow computation.
