@@ -95,51 +95,61 @@
     </message>
     <message>
         <location filename="../MainWindow.ui" line="215"/>
+        <source>Loop:</source>
+        <translation>ループ:</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="232"/>
         <source>Motion Texture Scale:</source>
         <translation>モーションテクスチャスケール:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="238"/>
+        <location filename="../MainWindow.ui" line="255"/>
         <source>Motion Vector Encoding:</source>
         <translation>Motion Vector エンコード:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="269"/>
+        <location filename="../MainWindow.ui" line="284"/>
+        <source>Analyze Skipped Frames:</source>
+        <translation>フレームスキップ解析:</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="303"/>
         <source>Generate</source>
         <translation>生成</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="313"/>
+        <location filename="../MainWindow.ui" line="347"/>
         <source>Color</source>
         <translation>カラー</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="352"/>
+        <location filename="../MainWindow.ui" line="386"/>
         <source>Motion Vector</source>
         <translation>モーションベクター</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="391"/>
+        <location filename="../MainWindow.ui" line="425"/>
         <source>Visualization</source>
         <translation>可視化</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="435"/>
+        <location filename="../MainWindow.ui" line="469"/>
         <source>Motion Strength:</source>
         <translation>モーション強度:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="445"/>
+        <location filename="../MainWindow.ui" line="479"/>
         <source>Discarded Trailing Frames:</source>
         <translation>末尾破棄フレーム数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="474"/>
+        <location filename="../MainWindow.ui" line="508"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="483"/>
+        <location filename="../MainWindow.ui" line="517"/>
         <source>Total Frames:</source>
         <translation>フレーム数:</translation>
     </message>
@@ -152,7 +162,7 @@
         <translation type="vanished">モーション強度 V</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="499"/>
+        <location filename="../MainWindow.ui" line="533"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -160,60 +170,60 @@
 <context>
     <name>MotionFrameApp</name>
     <message>
-        <location filename="../main.py" line="55"/>
+        <location filename="../main.py" line="53"/>
         <source>Select Directory</source>
         <translation>ディレクトリ選択</translation>
     </message>
     <message>
-        <location filename="../main.py" line="99"/>
+        <location filename="../main.py" line="97"/>
         <source>Frames can fit into the atlas.</source>
         <translation>フレームはアトラスに収まります。</translation>
     </message>
     <message>
-        <location filename="../main.py" line="102"/>
+        <location filename="../main.py" line="100"/>
         <source>1 frame won&apos;t fit into the atlas.</source>
         <translation>1フレームがアトラスに収まりません。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../main.py" line="103"/>
+        <location filename="../main.py" line="101"/>
         <source>%n frame(s) won&apos;t fit into the atlas.</source>
         <translation>
             <numerusform>%nフレームがアトラスに収まりません。</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../main.py" line="111"/>
+        <location filename="../main.py" line="109"/>
         <source>Try reducing the frame skip count or increasing the atlas size.</source>
         <translation>フレームスキップ数を減らすか、アトラスのサイズを大きくしてください。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../main.py" line="112"/>
+        <location filename="../main.py" line="110"/>
         <source>Minimum frame skip required to fit the frames is %n.</source>
         <translation>
             <numerusform>フレームを収めるために必要な最小フレームスキップは%nです。</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../main.py" line="118"/>
-        <location filename="../main.py" line="134"/>
-        <location filename="../main.py" line="139"/>
+        <location filename="../main.py" line="116"/>
+        <location filename="../main.py" line="133"/>
+        <location filename="../main.py" line="138"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../main.py" line="118"/>
-        <location filename="../main.py" line="134"/>
+        <location filename="../main.py" line="116"/>
+        <location filename="../main.py" line="133"/>
         <source>No frames loaded. Check the file pattern and paths.</source>
         <translation>フレームが読み込まれていません。ファイルパターンとパスを確認してください。</translation>
     </message>
     <message>
-        <location filename="../main.py" line="184"/>
-        <location filename="../main.py" line="197"/>
+        <location filename="../main.py" line="186"/>
+        <location filename="../main.py" line="199"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../main.py" line="197"/>
+        <location filename="../main.py" line="199"/>
         <source>The results have been saved successfully.</source>
         <translation>結果が正常に保存されました。</translation>
     </message>

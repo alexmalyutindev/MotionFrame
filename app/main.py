@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 
 import os
-import cv2
 import numpy as np
-import imageio.v3 as imageio
 import re
-from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QRadioButton, QVBoxLayout, QHBoxLayout, QGridLayout, QGroupBox, QFileDialog, QMessageBox, QTabWidget, QScrollArea, QLineEdit, QSpinBox, QMainWindow)
+from PySide6.QtWidgets import (QApplication, QFileDialog, QMessageBox, QMainWindow)
 from PySide6.QtGui import QPixmap, QImage
-from PySide6.QtCore import Qt, QSize, QTranslator, QLocale, QLibraryInfo
+from PySide6.QtCore import Qt, QTranslator
 from PIL import Image
 from MainWindow import Ui_MotionFrame
 from pathlib import Path
@@ -125,6 +123,8 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         atlas_height = self.number_atlas_height.value()
         frame_skip = self.number_frame_skip.value()
         motion_scale = self.number_scale.value()
+        is_loop = self.checkbox_loop.isChecked()
+        analyze_skipped_frames = self.checkbox_analyze_skipped_frames.isChecked()
 
         pattern = os.path.join(self.directory, f"{file_prefix}%0{int(num_digits)}d.{extension}")
 
@@ -141,7 +141,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())
 
-        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding )
+        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding, is_loop, analyze_skipped_frames)
 
         self.display_image(self.result.color_atlas, self.label_color_atlas_image)
         self.display_image(self.result.motion_atlas, self.label_motion_vector_image)

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.0
+## Created by: Qt User Interface Compiler version 6.7.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,17 +15,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDoubleSpinBox, QFormLayout,
-    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-    QMainWindow, QPushButton, QRadioButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QSpinBox, QTabWidget,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox,
+    QFormLayout, QGridLayout, QHBoxLayout, QLabel,
+    QLineEdit, QMainWindow, QPushButton, QRadioButton,
+    QScrollArea, QSizePolicy, QSpacerItem, QSpinBox,
+    QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_MotionFrame(object):
     def setupUi(self, MotionFrame):
         if not MotionFrame.objectName():
             MotionFrame.setObjectName(u"MotionFrame")
-        MotionFrame.resize(923, 461)
+        MotionFrame.resize(1584, 989)
         self.central = QWidget(MotionFrame)
         self.central.setObjectName(u"central")
         self.horizontalLayout = QHBoxLayout(self.central)
@@ -161,11 +161,23 @@ class Ui_MotionFrame(object):
 
         self.form_config.setWidget(7, QFormLayout.FieldRole, self.number_frame_skip)
 
+        self.label_loop = QLabel(self.central)
+        self.label_loop.setObjectName(u"label_loop")
+
+        self.form_config.setWidget(9, QFormLayout.LabelRole, self.label_loop)
+
+        self.checkbox_loop = QCheckBox(self.central)
+        self.checkbox_loop.setObjectName(u"checkbox_loop")
+        self.checkbox_loop.setText(u"")
+        self.checkbox_loop.setCheckable(True)
+
+        self.form_config.setWidget(9, QFormLayout.FieldRole, self.checkbox_loop)
+
         self.label_scale = QLabel(self.central)
         self.label_scale.setObjectName(u"label_scale")
         self.label_scale.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(8, QFormLayout.LabelRole, self.label_scale)
+        self.form_config.setWidget(10, QFormLayout.LabelRole, self.label_scale)
 
         self.number_scale = QDoubleSpinBox(self.central)
         self.number_scale.setObjectName(u"number_scale")
@@ -173,13 +185,13 @@ class Ui_MotionFrame(object):
         self.number_scale.setSingleStep(0.100000000000000)
         self.number_scale.setValue(1.000000000000000)
 
-        self.form_config.setWidget(8, QFormLayout.FieldRole, self.number_scale)
+        self.form_config.setWidget(10, QFormLayout.FieldRole, self.number_scale)
 
         self.label_motion_vector_encoding = QLabel(self.central)
         self.label_motion_vector_encoding.setObjectName(u"label_motion_vector_encoding")
         self.label_motion_vector_encoding.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(9, QFormLayout.LabelRole, self.label_motion_vector_encoding)
+        self.form_config.setWidget(11, QFormLayout.LabelRole, self.label_motion_vector_encoding)
 
         self.combo_motion_vector_encoding = QComboBox(self.central)
         self.combo_motion_vector_encoding.addItem(u"R8G8 Remapped to 0-1")
@@ -187,7 +199,19 @@ class Ui_MotionFrame(object):
         self.combo_motion_vector_encoding.addItem(u"R16G16")
         self.combo_motion_vector_encoding.setObjectName(u"combo_motion_vector_encoding")
 
-        self.form_config.setWidget(9, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
+        self.form_config.setWidget(11, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
+
+        self.label_analyze_skipped_frames = QLabel(self.central)
+        self.label_analyze_skipped_frames.setObjectName(u"label_analyze_skipped_frames")
+
+        self.form_config.setWidget(8, QFormLayout.LabelRole, self.label_analyze_skipped_frames)
+
+        self.checkbox_analyze_skipped_frames = QCheckBox(self.central)
+        self.checkbox_analyze_skipped_frames.setObjectName(u"checkbox_analyze_skipped_frames")
+        self.checkbox_analyze_skipped_frames.setText(u"")
+        self.checkbox_analyze_skipped_frames.setChecked(True)
+
+        self.form_config.setWidget(8, QFormLayout.FieldRole, self.checkbox_analyze_skipped_frames)
 
 
         self.layout_left.addLayout(self.form_config)
@@ -227,7 +251,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 420, 114))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 1079, 379))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -251,7 +275,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 420, 114))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 1079, 379))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -275,7 +299,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 420, 114))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 1079, 379))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
@@ -372,9 +396,11 @@ class Ui_MotionFrame(object):
         self.label_atlas_width.setText(QCoreApplication.translate("MotionFrame", u"Atlas Width:", None))
         self.label_atlas_height.setText(QCoreApplication.translate("MotionFrame", u"Atlas Height:", None))
         self.label_frame_skip.setText(QCoreApplication.translate("MotionFrame", u"Frame Skip:", None))
+        self.label_loop.setText(QCoreApplication.translate("MotionFrame", u"Loop:", None))
         self.label_scale.setText(QCoreApplication.translate("MotionFrame", u"Motion Texture Scale:", None))
         self.label_motion_vector_encoding.setText(QCoreApplication.translate("MotionFrame", u"Motion Vector Encoding:", None))
 
+        self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
         self.button_generate.setText(QCoreApplication.translate("MotionFrame", u"Generate", None))
         self.label_motion_vector.setText("")
         self.label_color_atlas_image.setText("")

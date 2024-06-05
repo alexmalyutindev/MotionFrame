@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 import os
 import cv2
 import numpy as np
@@ -20,9 +20,9 @@ class EncodeResult:
 def calculate_required_frames(frames, frame_skip):
     return (frames // (frame_skip + 1)) + min(frames % (frame_skip + 1), 1)
 
-def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding):
+def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding, is_loop, analyze_skipped_frames):
     color_atlas, total_frames = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
-    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding)
+    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames)
 
     motion_scale = min(max(motion_scale, 0.01), 1.0)
     if motion_scale < 1.0:
@@ -66,7 +66,6 @@ def _create_color_atlas(frames, atlas_width, atlas_height, frame_skip):
     else:
         color_atlas = np.zeros([atlas_height * height, atlas_width * width], dtype=np.uint8)
 
-    idx = 0
     _blit_image(frames[0], color_atlas, (0, 0))
     atlas_idx = 1
     for i in range(frame_skip + 1, len(frames), frame_skip + 1):
@@ -137,7 +136,7 @@ def _encode_motion_vector(method, flow, max_strength):
 
     return r, g
 
-def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding):
+def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames):
     height, width = frames[0].shape[:2]
     motion_atlas = np.zeros([atlas_height * height, atlas_width * width, 3], dtype=np.uint8)
 
@@ -153,7 +152,8 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
     atlas_idx = 0
 
     flow_frames = []
-    last_frame_batch = []
+    last_valid_frame_batch = []
+    loop_frame_batch = []
 
     while frame_idx < len(frames):
         frame_batch = []
@@ -162,7 +162,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
 
         # Prepare frames for optical flow computation.
         # This includes skipped frames.
-        for i in range(frame_skip + 2):
+        for _ in range(frame_skip + 2):
             if frame_idx >= len(frames):
                 break
 
@@ -174,10 +174,12 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
 
         # Couldn't load enough frames for consistent frame skips
         if len(frame_batch) != (frame_skip + 2):
+            # Use the unused batch for the loop mode
+            loop_frame_batch = frame_batch
             break
 
         # Compute displacement
-        flow = _accumulate_displacement(frame_batch)
+        flow = _accumulate_displacement(frame_batch, analyze_skipped_frames)
         # Normalize the flow vectors based on image dimensions
         flow = _normalize_displacement(flow)
 
@@ -190,25 +192,42 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
         atlas_idx += 1
 
         flow_frames.append(flow)
-        last_frame_batch = frame_batch
+        last_valid_frame_batch = frame_batch
+    
+    # In a case where there are no frames to process for the loop, the last frame in the last valid frame batch is used.
+    if len(loop_frame_batch) == 0:
+        loop_frame_batch.append(last_valid_frame_batch[-1])
 
     # Generate final motion vector frame. The number of frames in flow_frames are one less than the color atlas frames now.
     # This is because motion vector represents the motion between each color atlas frames, which means there is one less motion vector.
-    # However, one more motion vector frame is actually needed for the last color atlas frame to extrapolate back into the past for better rendering.
-    # It is possible to ask the artist to render extra frames at the end just for motion vector, but it is not an intuitive workflow.
-    # To make up the final frame, the motion vector is computed for the last frame batch but in reverse order, and flipping the direction.
-    frame_batch = last_frame_batch
-    frame_batch.reverse()
+    if is_loop:
+        # This is for loop mode. In this case, the last motion vector is a motion vector from the last frame to the first frame.
+        # The displacement is computed from the last frame to the first frame, with the remaining unprocessed frames in the middle if skipped frame analysis is enabled.
+        frame_batch = loop_frame_batch + [_prepare_optical_flow_frame(frames[0])]
 
-    # Compute displacement
-    flow = _accumulate_displacement(frame_batch)
-    # Normalize the flow vectors based on image dimensions
-    flow = _normalize_displacement(flow)
-    # Flip the displacement direction
-    flow = -flow
+        # Compute displacement
+        flow = _accumulate_displacement(frame_batch, analyze_skipped_frames)
+        # Normalize the flow vectors based on image dimensions
+        flow = _normalize_displacement(flow)
 
-    # Update maximum motion strength
-    max_strength = _update_max_strength(flow, motion_vector_encoding, max_strength)
+        # Update maximum motion strength
+        max_strength = _update_max_strength(flow, motion_vector_encoding, max_strength)
+    else:
+        # This is for non-loop mode. The last frame batch is not complete, so we need to extrapolate the motion vector for the last frame.
+        # This is done by computing the motion vector in reverse order, and flipping the direction.
+        # This is not the most accurate way to compute the motion vector, but it is a simple way to make up the missing motion vector.
+        frame_batch = last_valid_frame_batch 
+        frame_batch.reverse()
+
+        # Compute displacement
+        flow = _accumulate_displacement(frame_batch, analyze_skipped_frames)
+        # Normalize the flow vectors based on image dimensions
+        flow = _normalize_displacement(flow)
+        # Flip the displacement direction
+        flow = -flow
+
+        # Update maximum motion strength
+        max_strength = _update_max_strength(flow, motion_vector_encoding, max_strength)
 
     # Draw optical flow directions visualization
     direction_image = _draw_optical_flow(flow, frame_batch[0], frame_batch[-1])
@@ -257,13 +276,19 @@ def _blit_image(source, target, target_coords):
     else:
         target[y:y+source_height, x:x+source_width] = source
 
-def _accumulate_displacement(frames):
+def _accumulate_displacement(frames, analyze_skipped_frames):
+    if len(frames) < 2:
+        return None
+
+    if not analyze_skipped_frames:
+        frames = [frames[0], frames[-1]]
+
     h, w = frames[0].shape[:2]
     accumulated_displacement = np.zeros((h, w, 2), np.float32)
     for i in range(1, len(frames)):
         prev_frame = frames[i-1]
         next_frame = frames[i]
-        flow = cv2.calcOpticalFlowFarneback(prev_frame, next_frame, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+        flow = cv2.calcOpticalFlowFarneback(prev_frame, next_frame, None, 0.5, 8, 15, 5, 5, 1.5, 0)
         grid_x, grid_y = np.meshgrid(np.arange(w), np.arange(h))
         current_x = (grid_x + accumulated_displacement[..., 0]).astype(np.float32)
         current_y = (grid_y + accumulated_displacement[..., 1]).astype(np.float32)
