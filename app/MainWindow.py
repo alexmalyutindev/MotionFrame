@@ -25,7 +25,7 @@ class Ui_MotionFrame(object):
     def setupUi(self, MotionFrame):
         if not MotionFrame.objectName():
             MotionFrame.setObjectName(u"MotionFrame")
-        MotionFrame.resize(923, 600)
+        MotionFrame.resize(923, 651)
         self.central = QWidget(MotionFrame)
         self.central.setObjectName(u"central")
         self.horizontalLayout = QHBoxLayout(self.central)
@@ -59,45 +59,40 @@ class Ui_MotionFrame(object):
 
         self.form_config.setLayout(0, QFormLayout.FieldRole, self.layout_language)
 
+        self.button_file_browse = QPushButton(self.central)
+        self.button_file_browse.setObjectName(u"button_file_browse")
+        self.button_file_browse.setMaximumSize(QSize(221, 32))
+
+        self.form_config.setWidget(1, QFormLayout.FieldRole, self.button_file_browse)
+
         self.label_directory = QLabel(self.central)
         self.label_directory.setObjectName(u"label_directory")
         self.label_directory.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(1, QFormLayout.LabelRole, self.label_directory)
+        self.form_config.setWidget(2, QFormLayout.LabelRole, self.label_directory)
 
-        self.layout_directory = QVBoxLayout()
-        self.layout_directory.setObjectName(u"layout_directory")
         self.text_directory = QLineEdit(self.central)
         self.text_directory.setObjectName(u"text_directory")
 
-        self.layout_directory.addWidget(self.text_directory)
-
-        self.button_directory_browse = QPushButton(self.central)
-        self.button_directory_browse.setObjectName(u"button_directory_browse")
-        self.button_directory_browse.setMaximumSize(QSize(221, 32))
-
-        self.layout_directory.addWidget(self.button_directory_browse)
-
-
-        self.form_config.setLayout(1, QFormLayout.FieldRole, self.layout_directory)
+        self.form_config.setWidget(2, QFormLayout.FieldRole, self.text_directory)
 
         self.label_file_prefix = QLabel(self.central)
         self.label_file_prefix.setObjectName(u"label_file_prefix")
         self.label_file_prefix.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(2, QFormLayout.LabelRole, self.label_file_prefix)
+        self.form_config.setWidget(3, QFormLayout.LabelRole, self.label_file_prefix)
 
         self.text_file_prefix = QLineEdit(self.central)
         self.text_file_prefix.setObjectName(u"text_file_prefix")
         self.text_file_prefix.setText(u"flipbook_")
 
-        self.form_config.setWidget(2, QFormLayout.FieldRole, self.text_file_prefix)
+        self.form_config.setWidget(3, QFormLayout.FieldRole, self.text_file_prefix)
 
         self.label_sequence_digits = QLabel(self.central)
         self.label_sequence_digits.setObjectName(u"label_sequence_digits")
         self.label_sequence_digits.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(3, QFormLayout.LabelRole, self.label_sequence_digits)
+        self.form_config.setWidget(4, QFormLayout.LabelRole, self.label_sequence_digits)
 
         self.number_sequence_digits = QSpinBox(self.central)
         self.number_sequence_digits.setObjectName(u"number_sequence_digits")
@@ -105,25 +100,25 @@ class Ui_MotionFrame(object):
         self.number_sequence_digits.setMaximum(10)
         self.number_sequence_digits.setValue(3)
 
-        self.form_config.setWidget(3, QFormLayout.FieldRole, self.number_sequence_digits)
+        self.form_config.setWidget(4, QFormLayout.FieldRole, self.number_sequence_digits)
 
         self.label_extension = QLabel(self.central)
         self.label_extension.setObjectName(u"label_extension")
         self.label_extension.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(4, QFormLayout.LabelRole, self.label_extension)
+        self.form_config.setWidget(5, QFormLayout.LabelRole, self.label_extension)
 
         self.text_extension = QLineEdit(self.central)
         self.text_extension.setObjectName(u"text_extension")
         self.text_extension.setText(u"tga")
 
-        self.form_config.setWidget(4, QFormLayout.FieldRole, self.text_extension)
+        self.form_config.setWidget(5, QFormLayout.FieldRole, self.text_extension)
 
         self.label_atlas_width = QLabel(self.central)
         self.label_atlas_width.setObjectName(u"label_atlas_width")
         self.label_atlas_width.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(5, QFormLayout.LabelRole, self.label_atlas_width)
+        self.form_config.setWidget(6, QFormLayout.LabelRole, self.label_atlas_width)
 
         self.number_atlas_width = QSpinBox(self.central)
         self.number_atlas_width.setObjectName(u"number_atlas_width")
@@ -131,13 +126,13 @@ class Ui_MotionFrame(object):
         self.number_atlas_width.setMaximum(64)
         self.number_atlas_width.setValue(8)
 
-        self.form_config.setWidget(5, QFormLayout.FieldRole, self.number_atlas_width)
+        self.form_config.setWidget(6, QFormLayout.FieldRole, self.number_atlas_width)
 
         self.label_atlas_height = QLabel(self.central)
         self.label_atlas_height.setObjectName(u"label_atlas_height")
         self.label_atlas_height.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(6, QFormLayout.LabelRole, self.label_atlas_height)
+        self.form_config.setWidget(7, QFormLayout.LabelRole, self.label_atlas_height)
 
         self.number_atlas_height = QSpinBox(self.central)
         self.number_atlas_height.setObjectName(u"number_atlas_height")
@@ -145,13 +140,13 @@ class Ui_MotionFrame(object):
         self.number_atlas_height.setMaximum(64)
         self.number_atlas_height.setValue(8)
 
-        self.form_config.setWidget(6, QFormLayout.FieldRole, self.number_atlas_height)
+        self.form_config.setWidget(7, QFormLayout.FieldRole, self.number_atlas_height)
 
         self.label_frame_skip = QLabel(self.central)
         self.label_frame_skip.setObjectName(u"label_frame_skip")
         self.label_frame_skip.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(7, QFormLayout.LabelRole, self.label_frame_skip)
+        self.form_config.setWidget(8, QFormLayout.LabelRole, self.label_frame_skip)
 
         self.number_frame_skip = QSpinBox(self.central)
         self.number_frame_skip.setObjectName(u"number_frame_skip")
@@ -159,25 +154,37 @@ class Ui_MotionFrame(object):
         self.number_frame_skip.setMaximum(128)
         self.number_frame_skip.setValue(0)
 
-        self.form_config.setWidget(7, QFormLayout.FieldRole, self.number_frame_skip)
+        self.form_config.setWidget(8, QFormLayout.FieldRole, self.number_frame_skip)
+
+        self.label_analyze_skipped_frames = QLabel(self.central)
+        self.label_analyze_skipped_frames.setObjectName(u"label_analyze_skipped_frames")
+
+        self.form_config.setWidget(9, QFormLayout.LabelRole, self.label_analyze_skipped_frames)
+
+        self.checkbox_analyze_skipped_frames = QCheckBox(self.central)
+        self.checkbox_analyze_skipped_frames.setObjectName(u"checkbox_analyze_skipped_frames")
+        self.checkbox_analyze_skipped_frames.setText(u"")
+        self.checkbox_analyze_skipped_frames.setChecked(True)
+
+        self.form_config.setWidget(9, QFormLayout.FieldRole, self.checkbox_analyze_skipped_frames)
 
         self.label_loop = QLabel(self.central)
         self.label_loop.setObjectName(u"label_loop")
 
-        self.form_config.setWidget(9, QFormLayout.LabelRole, self.label_loop)
+        self.form_config.setWidget(10, QFormLayout.LabelRole, self.label_loop)
 
         self.checkbox_loop = QCheckBox(self.central)
         self.checkbox_loop.setObjectName(u"checkbox_loop")
         self.checkbox_loop.setText(u"")
         self.checkbox_loop.setCheckable(True)
 
-        self.form_config.setWidget(9, QFormLayout.FieldRole, self.checkbox_loop)
+        self.form_config.setWidget(10, QFormLayout.FieldRole, self.checkbox_loop)
 
         self.label_scale = QLabel(self.central)
         self.label_scale.setObjectName(u"label_scale")
         self.label_scale.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(10, QFormLayout.LabelRole, self.label_scale)
+        self.form_config.setWidget(11, QFormLayout.LabelRole, self.label_scale)
 
         self.number_scale = QDoubleSpinBox(self.central)
         self.number_scale.setObjectName(u"number_scale")
@@ -185,13 +192,13 @@ class Ui_MotionFrame(object):
         self.number_scale.setSingleStep(0.100000000000000)
         self.number_scale.setValue(1.000000000000000)
 
-        self.form_config.setWidget(10, QFormLayout.FieldRole, self.number_scale)
+        self.form_config.setWidget(11, QFormLayout.FieldRole, self.number_scale)
 
         self.label_motion_vector_encoding = QLabel(self.central)
         self.label_motion_vector_encoding.setObjectName(u"label_motion_vector_encoding")
         self.label_motion_vector_encoding.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(11, QFormLayout.LabelRole, self.label_motion_vector_encoding)
+        self.form_config.setWidget(12, QFormLayout.LabelRole, self.label_motion_vector_encoding)
 
         self.combo_motion_vector_encoding = QComboBox(self.central)
         self.combo_motion_vector_encoding.addItem(u"R8G8 Remapped to 0-1")
@@ -199,19 +206,7 @@ class Ui_MotionFrame(object):
         self.combo_motion_vector_encoding.addItem(u"R16G16")
         self.combo_motion_vector_encoding.setObjectName(u"combo_motion_vector_encoding")
 
-        self.form_config.setWidget(11, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
-
-        self.label_analyze_skipped_frames = QLabel(self.central)
-        self.label_analyze_skipped_frames.setObjectName(u"label_analyze_skipped_frames")
-
-        self.form_config.setWidget(8, QFormLayout.LabelRole, self.label_analyze_skipped_frames)
-
-        self.checkbox_analyze_skipped_frames = QCheckBox(self.central)
-        self.checkbox_analyze_skipped_frames.setObjectName(u"checkbox_analyze_skipped_frames")
-        self.checkbox_analyze_skipped_frames.setText(u"")
-        self.checkbox_analyze_skipped_frames.setChecked(True)
-
-        self.form_config.setWidget(8, QFormLayout.FieldRole, self.checkbox_analyze_skipped_frames)
+        self.form_config.setWidget(12, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
 
 
         self.layout_left.addLayout(self.form_config)
@@ -223,17 +218,6 @@ class Ui_MotionFrame(object):
 
         self.form_input_frames = QFormLayout()
         self.form_input_frames.setObjectName(u"form_input_frames")
-        self.label_preferred_input_number_of_frames = QLabel(self.central)
-        self.label_preferred_input_number_of_frames.setObjectName(u"label_preferred_input_number_of_frames")
-
-        self.form_input_frames.setWidget(1, QFormLayout.LabelRole, self.label_preferred_input_number_of_frames)
-
-        self.label_preferred_input_number_of_frames_value = QLabel(self.central)
-        self.label_preferred_input_number_of_frames_value.setObjectName(u"label_preferred_input_number_of_frames_value")
-        self.label_preferred_input_number_of_frames_value.setText(u"0")
-
-        self.form_input_frames.setWidget(1, QFormLayout.FieldRole, self.label_preferred_input_number_of_frames_value)
-
         self.label_input_number_of_frames = QLabel(self.central)
         self.label_input_number_of_frames.setObjectName(u"label_input_number_of_frames")
 
@@ -244,6 +228,17 @@ class Ui_MotionFrame(object):
         self.label_input_number_of_frames_value.setText(u"0")
 
         self.form_input_frames.setWidget(0, QFormLayout.FieldRole, self.label_input_number_of_frames_value)
+
+        self.label_preferred_input_number_of_frames = QLabel(self.central)
+        self.label_preferred_input_number_of_frames.setObjectName(u"label_preferred_input_number_of_frames")
+
+        self.form_input_frames.setWidget(1, QFormLayout.LabelRole, self.label_preferred_input_number_of_frames)
+
+        self.label_preferred_input_number_of_frames_value = QLabel(self.central)
+        self.label_preferred_input_number_of_frames_value.setObjectName(u"label_preferred_input_number_of_frames_value")
+        self.label_preferred_input_number_of_frames_value.setText(u"0")
+
+        self.form_input_frames.setWidget(1, QFormLayout.FieldRole, self.label_preferred_input_number_of_frames_value)
 
 
         self.layout_left.addLayout(self.form_input_frames)
@@ -258,7 +253,7 @@ class Ui_MotionFrame(object):
 
         self.layout_left.addWidget(self.label_motion_vector)
 
-        self.left_spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.left_spacer = QSpacerItem(378, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.layout_left.addItem(self.left_spacer)
 
@@ -283,7 +278,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 417, 183))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 417, 209))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -307,7 +302,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 417, 183))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 417, 209))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -331,7 +326,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 417, 183))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 417, 209))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
@@ -420,22 +415,22 @@ class Ui_MotionFrame(object):
     def retranslateUi(self, MotionFrame):
         MotionFrame.setWindowTitle(QCoreApplication.translate("MotionFrame", u"MainWindow", None))
         self.label_language.setText(QCoreApplication.translate("MotionFrame", u"Language:", None))
+        self.button_file_browse.setText(QCoreApplication.translate("MotionFrame", u"Browse\u2026", None))
         self.label_directory.setText(QCoreApplication.translate("MotionFrame", u"Directory:", None))
-        self.button_directory_browse.setText(QCoreApplication.translate("MotionFrame", u"Browse\u2026", None))
         self.label_file_prefix.setText(QCoreApplication.translate("MotionFrame", u"File Prefix:", None))
         self.label_sequence_digits.setText(QCoreApplication.translate("MotionFrame", u"Sequence Digits:", None))
         self.label_extension.setText(QCoreApplication.translate("MotionFrame", u"Extension:", None))
         self.label_atlas_width.setText(QCoreApplication.translate("MotionFrame", u"Atlas Width:", None))
         self.label_atlas_height.setText(QCoreApplication.translate("MotionFrame", u"Atlas Height:", None))
         self.label_frame_skip.setText(QCoreApplication.translate("MotionFrame", u"Frame Skip:", None))
+        self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
         self.label_loop.setText(QCoreApplication.translate("MotionFrame", u"Loop:", None))
         self.label_scale.setText(QCoreApplication.translate("MotionFrame", u"Motion Texture Scale:", None))
         self.label_motion_vector_encoding.setText(QCoreApplication.translate("MotionFrame", u"Motion Vector Encoding:", None))
 
-        self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
         self.button_generate.setText(QCoreApplication.translate("MotionFrame", u"Generate", None))
-        self.label_preferred_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Preferred Input Number of Frames:", None))
         self.label_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Input Number of Frames:", None))
+        self.label_preferred_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Preferred Input Number of Frames:", None))
         self.button_update_frames.setText(QCoreApplication.translate("MotionFrame", u"Recount Input Frames", None))
         self.label_motion_vector.setText("")
         self.label_color_atlas_image.setText("")

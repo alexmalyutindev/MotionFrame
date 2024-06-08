@@ -20,6 +20,22 @@ class EncodeResult:
 def calculate_required_frames(frames, frame_skip):
     return (frames // (frame_skip + 1)) + min(frames % (frame_skip + 1), 1)
 
+def decode_atlas(atlas, atlas_width, atlas_height):
+    # Error check for divisibility
+    if atlas.shape[0] % atlas_height != 0 or atlas.shape[1] % atlas_width != 0:
+        return None
+
+    height = atlas.shape[0] // atlas_height
+    width = atlas.shape[1] // atlas_width
+    frames = []
+
+    for y in range(atlas_height):
+        for x in range(atlas_width):
+            frame = atlas[y * height:(y + 1) * height, x * width:(x + 1) * width]
+            frames.append(frame)
+
+    return frames
+
 def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding, is_loop, analyze_skipped_frames):
     color_atlas, total_frames = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
     motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames)
@@ -192,7 +208,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
 
         flow_frames.append(flow)
         last_valid_frame_batch = frame_batch
-    
+
     # In a case where there are no frames to process for the loop, the last frame in the last valid frame batch is used.
     if len(loop_frame_batch) == 0:
         loop_frame_batch.append(last_valid_frame_batch[-1])
@@ -215,7 +231,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
         # This is for non-loop mode. The last frame batch is not complete, so we need to extrapolate the motion vector for the last frame.
         # This is done by computing the motion vector in reverse order, and flipping the direction.
         # This is not the most accurate way to compute the motion vector, but it is a simple way to make up the missing motion vector.
-        frame_batch = last_valid_frame_batch 
+        frame_batch = last_valid_frame_batch
         frame_batch.reverse()
 
         # Compute displacement

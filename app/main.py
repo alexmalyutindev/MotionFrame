@@ -23,7 +23,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.translator = QTranslator()
         self._load_translator()
 
-        self.button_directory_browse.clicked.connect(self.select_directory)
+        self.button_file_browse.clicked.connect(self.select_file)
         self.button_generate.clicked.connect(self.start_processing)
         self.button_copy_motion_strength.clicked.connect(self.copy_motion_strength)
         self.button_save.clicked.connect(self.save_results)
@@ -56,35 +56,37 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
                 app.installTranslator(self.translator)
             self.retranslateUi(self)
 
-    def select_directory(self):
-        directory = QFileDialog.getExistingDirectory(self, self.tr('Select Directory'))
-
-        if not directory:
+    def _set_input_frame(self, frame_path):
+        if not frame_path:
             return
 
-        self.directory = directory
-        self.text_directory.setText(directory)
-        prefix, ext, zeros = self._detect_image_sequence_pattern()
+        self.directory = os.path.dirname(frame_path)
+        self.text_directory.setText(self.directory)
+        prefix, ext, zeros = self._detect_image_sequence_pattern(os.path.basename(frame_path))
         self.text_file_prefix.setText(prefix)
         self.text_extension.setText(ext)
         self.number_sequence_digits.setValue(zeros)
 
         self._update_frame_count()
 
+    def select_file(self):
+        frame_path = QFileDialog.getOpenFileName(self, self.tr('Select Frame'), '',
+                                                 'Images (*.jpg *.jpeg *.png *.bmp *.tiff *.tga)')[0]
+        self._set_input_frame(frame_path)
+
     def _load_frame_paths(self):
         prefix = self.text_file_prefix.text()
         extension = self.text_extension.text()
         num_digits = self.number_sequence_digits.value()
 
-        pattern = f"{prefix}[0-9]{{{int(num_digits)}}}.{extension}"
+        pattern = f"^{prefix}[0-9]{{{int(num_digits)}}}.{extension}$"
         pattern = re.compile(pattern)
         files = os.listdir(self.directory)
-        image_files = [f for f in files if re.search(r'\.(jpg|jpeg|png|bmp|tiff|tga)$', f, re.IGNORECASE)]
-        image_files.sort()
+        files.sort()
 
         file_paths = []
 
-        for image_file in image_files:
+        for image_file in files:
             match = pattern.match(image_file)
             if match:
                 file_paths.append(os.path.join(self.directory, image_file))
@@ -110,26 +112,15 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
     def _update_preferred_frame_count(self):
         self.label_preferred_input_number_of_frames_value.setText(str(self._preferred_frame_count()))
 
-    def _detect_image_sequence_pattern(self):
-        directory_path = self.directory
-
-        files = os.listdir(directory_path)
-        image_files = [f for f in files if re.search(r'\.(jpg|jpeg|png|bmp|tiff|tga)$', f, re.IGNORECASE)]
-
-        if not image_files:
-            return None, None, None
-
+    def _detect_image_sequence_pattern(self, file_path):
         pattern = re.compile(r'(.*?)(\d+)\.(\w+)$')
 
-        for image_file in image_files:
-            match = pattern.match(image_file)
-            if not match:
-                continue
+        match = pattern.match(file_path)
+        if not match:
+            return None, None, None
 
-            prefix, number, extension = match.groups()
-            return prefix, extension, len(number)
-
-        return None, None, None
+        prefix, number, extension = match.groups()
+        return prefix, extension, len(number)
 
     def copy_motion_strength(self):
         clipboard = QApplication.clipboard()
@@ -243,6 +234,27 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         Image.fromarray(motion_atlas).save(motion_atlas_path)
 
         QMessageBox.information(self, self.tr('Save'), self.tr('The results have been saved successfully.'))
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            super().dragEnterEvent(event)
+
+    def dropEvent(self, event):
+        for url in event.mimeData().urls():
+            path = url.toLocalFile()
+            if os.path.isdir(path):
+                files = os.listdir(path)
+                for file in files:
+                    if re.search(r'\.(jpg|jpeg|png|bmp|tiff|tga)$', file, re.IGNORECASE):
+                        self._set_input_frame(os.path.join(path, file))
+                        event.acceptProposedAction()
+                        break
+            if os.path.isfile(path):
+                self._set_input_frame(path)
+                event.acceptProposedAction()
+                break
 
 if __name__ == '__main__':
     app = QApplication([])
