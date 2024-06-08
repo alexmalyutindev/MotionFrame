@@ -25,7 +25,7 @@ class Ui_MotionFrame(object):
     def setupUi(self, MotionFrame):
         if not MotionFrame.objectName():
             MotionFrame.setObjectName(u"MotionFrame")
-        MotionFrame.resize(1584, 989)
+        MotionFrame.resize(923, 600)
         self.central = QWidget(MotionFrame)
         self.central.setObjectName(u"central")
         self.horizontalLayout = QHBoxLayout(self.central)
@@ -221,6 +221,38 @@ class Ui_MotionFrame(object):
 
         self.layout_left.addWidget(self.button_generate)
 
+        self.form_input_frames = QFormLayout()
+        self.form_input_frames.setObjectName(u"form_input_frames")
+        self.label_preferred_input_number_of_frames = QLabel(self.central)
+        self.label_preferred_input_number_of_frames.setObjectName(u"label_preferred_input_number_of_frames")
+
+        self.form_input_frames.setWidget(1, QFormLayout.LabelRole, self.label_preferred_input_number_of_frames)
+
+        self.label_preferred_input_number_of_frames_value = QLabel(self.central)
+        self.label_preferred_input_number_of_frames_value.setObjectName(u"label_preferred_input_number_of_frames_value")
+        self.label_preferred_input_number_of_frames_value.setText(u"0")
+
+        self.form_input_frames.setWidget(1, QFormLayout.FieldRole, self.label_preferred_input_number_of_frames_value)
+
+        self.label_input_number_of_frames = QLabel(self.central)
+        self.label_input_number_of_frames.setObjectName(u"label_input_number_of_frames")
+
+        self.form_input_frames.setWidget(0, QFormLayout.LabelRole, self.label_input_number_of_frames)
+
+        self.label_input_number_of_frames_value = QLabel(self.central)
+        self.label_input_number_of_frames_value.setObjectName(u"label_input_number_of_frames_value")
+        self.label_input_number_of_frames_value.setText(u"0")
+
+        self.form_input_frames.setWidget(0, QFormLayout.FieldRole, self.label_input_number_of_frames_value)
+
+
+        self.layout_left.addLayout(self.form_input_frames)
+
+        self.button_update_frames = QPushButton(self.central)
+        self.button_update_frames.setObjectName(u"button_update_frames")
+
+        self.layout_left.addWidget(self.button_update_frames)
+
         self.label_motion_vector = QLabel(self.central)
         self.label_motion_vector.setObjectName(u"label_motion_vector")
 
@@ -251,7 +283,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 1079, 379))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 417, 183))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -275,7 +307,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 1079, 379))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 417, 183))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -299,7 +331,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 1079, 379))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 417, 183))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
@@ -402,6 +434,9 @@ class Ui_MotionFrame(object):
 
         self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
         self.button_generate.setText(QCoreApplication.translate("MotionFrame", u"Generate", None))
+        self.label_preferred_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Preferred Input Number of Frames:", None))
+        self.label_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Input Number of Frames:", None))
+        self.button_update_frames.setText(QCoreApplication.translate("MotionFrame", u"Recount Input Frames", None))
         self.label_motion_vector.setText("")
         self.label_color_atlas_image.setText("")
         self.tabs_result.setTabText(self.tabs_result.indexOf(self.tab_color), QCoreApplication.translate("MotionFrame", u"Color", None))

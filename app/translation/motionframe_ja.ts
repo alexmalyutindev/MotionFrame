@@ -119,37 +119,56 @@
         <translation>生成</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="347"/>
+        <location filename="../MainWindow.ui" line="312"/>
+        <source>Preferred Input Number of Frames:</source>
+        <translation>推奨入力フレーム数:</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="326"/>
+        <source>Input Number of Frames:</source>
+        <translation>入力フレーム数:</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="342"/>
+        <source>Recount Input Frames</source>
+        <translation>入力フレーム数を再計算</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation type="vanished">更新</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="386"/>
         <source>Color</source>
         <translation>カラー</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="386"/>
+        <location filename="../MainWindow.ui" line="425"/>
         <source>Motion Vector</source>
         <translation>モーションベクター</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="425"/>
+        <location filename="../MainWindow.ui" line="464"/>
         <source>Visualization</source>
         <translation>可視化</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="469"/>
+        <location filename="../MainWindow.ui" line="508"/>
         <source>Motion Strength:</source>
         <translation>モーション強度:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="479"/>
+        <location filename="../MainWindow.ui" line="518"/>
         <source>Discarded Trailing Frames:</source>
         <translation>末尾破棄フレーム数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="508"/>
+        <location filename="../MainWindow.ui" line="547"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="517"/>
+        <location filename="../MainWindow.ui" line="556"/>
         <source>Total Frames:</source>
         <translation>フレーム数:</translation>
     </message>
@@ -162,7 +181,7 @@
         <translation type="vanished">モーション強度 V</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="533"/>
+        <location filename="../MainWindow.ui" line="572"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -170,60 +189,60 @@
 <context>
     <name>MotionFrameApp</name>
     <message>
-        <location filename="../main.py" line="53"/>
+        <location filename="../main.py" line="60"/>
         <source>Select Directory</source>
         <translation>ディレクトリ選択</translation>
     </message>
     <message>
-        <location filename="../main.py" line="97"/>
+        <location filename="../main.py" line="145"/>
         <source>Frames can fit into the atlas.</source>
         <translation>フレームはアトラスに収まります。</translation>
     </message>
     <message>
-        <location filename="../main.py" line="100"/>
+        <location filename="../main.py" line="148"/>
         <source>1 frame won&apos;t fit into the atlas.</source>
         <translation>1フレームがアトラスに収まりません。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../main.py" line="101"/>
+        <location filename="../main.py" line="149"/>
         <source>%n frame(s) won&apos;t fit into the atlas.</source>
         <translation>
             <numerusform>%nフレームがアトラスに収まりません。</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../main.py" line="109"/>
+        <location filename="../main.py" line="157"/>
         <source>Try reducing the frame skip count or increasing the atlas size.</source>
         <translation>フレームスキップ数を減らすか、アトラスのサイズを大きくしてください。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../main.py" line="110"/>
+        <location filename="../main.py" line="158"/>
         <source>Minimum frame skip required to fit the frames is %n.</source>
         <translation>
             <numerusform>フレームを収めるために必要な最小フレームスキップは%nです。</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../main.py" line="116"/>
-        <location filename="../main.py" line="133"/>
-        <location filename="../main.py" line="138"/>
+        <location filename="../main.py" line="164"/>
+        <location filename="../main.py" line="178"/>
+        <location filename="../main.py" line="184"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../main.py" line="116"/>
-        <location filename="../main.py" line="133"/>
+        <location filename="../main.py" line="164"/>
+        <location filename="../main.py" line="184"/>
         <source>No frames loaded. Check the file pattern and paths.</source>
         <translation>フレームが読み込まれていません。ファイルパターンとパスを確認してください。</translation>
     </message>
     <message>
-        <location filename="../main.py" line="186"/>
-        <location filename="../main.py" line="199"/>
+        <location filename="../main.py" line="232"/>
+        <location filename="../main.py" line="245"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../main.py" line="199"/>
+        <location filename="../main.py" line="245"/>
         <source>The results have been saved successfully.</source>
         <translation>結果が正常に保存されました。</translation>
     </message>

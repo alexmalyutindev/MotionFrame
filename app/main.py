@@ -31,6 +31,13 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.radio_button_language_english.toggled.connect(lambda: self.change_language('en'))
         self.radio_button_language_japanese.toggled.connect(lambda: self.change_language('ja'))
 
+        self.button_update_frames.clicked.connect(self._update_frame_count)
+
+        self.number_atlas_width.valueChanged.connect(self._update_preferred_frame_count)
+        self.number_atlas_height.valueChanged.connect(self._update_preferred_frame_count)
+        self.number_frame_skip.valueChanged.connect(self._update_preferred_frame_count)
+        self.checkbox_loop.toggled.connect(self._update_preferred_frame_count)
+
     def _get_path_qm(self, lang):
         return (Path(__file__).parent / f"./translation/motionframe_{lang}.qm").absolute().as_posix()
 
@@ -61,6 +68,47 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.text_file_prefix.setText(prefix)
         self.text_extension.setText(ext)
         self.number_sequence_digits.setValue(zeros)
+
+        self._update_frame_count()
+
+    def _load_frame_paths(self):
+        prefix = self.text_file_prefix.text()
+        extension = self.text_extension.text()
+        num_digits = self.number_sequence_digits.value()
+
+        pattern = f"{prefix}[0-9]{{{int(num_digits)}}}.{extension}"
+        pattern = re.compile(pattern)
+        files = os.listdir(self.directory)
+        image_files = [f for f in files if re.search(r'\.(jpg|jpeg|png|bmp|tiff|tga)$', f, re.IGNORECASE)]
+        image_files.sort()
+
+        file_paths = []
+
+        for image_file in image_files:
+            match = pattern.match(image_file)
+            if match:
+                file_paths.append(os.path.join(self.directory, image_file))
+
+        return file_paths
+
+    def _preferred_frame_count(self):
+        atlas_size = self.number_atlas_width.value() * self.number_atlas_height.value()
+        frame_skip = self.number_frame_skip.value()
+
+        used_frames = atlas_size * (1 + frame_skip)
+
+        # When not looping, the last frame doesn't use the frame skip to analyze motion
+        if not self.checkbox_loop.isChecked():
+            used_frames -= frame_skip
+
+        return used_frames
+
+    def _update_frame_count(self):
+        self.label_input_number_of_frames_value.setText(str(len(self._load_frame_paths())))
+        self._update_preferred_frame_count()
+
+    def _update_preferred_frame_count(self):
+        self.label_preferred_input_number_of_frames_value.setText(str(self._preferred_frame_count()))
 
     def _detect_image_sequence_pattern(self):
         directory_path = self.directory
@@ -116,9 +164,6 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
             QMessageBox.critical(self, self.tr('Error'), self.tr('No frames loaded. Check the file pattern and paths.'))
             return
 
-        file_prefix = self.text_file_prefix.text()
-        extension = self.text_extension.text()
-        num_digits = self.number_sequence_digits.value()
         atlas_width = self.number_atlas_width.value()
         atlas_height = self.number_atlas_height.value()
         frame_skip = self.number_frame_skip.value()
@@ -126,17 +171,17 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         is_loop = self.checkbox_loop.isChecked()
         analyze_skipped_frames = self.checkbox_analyze_skipped_frames.isChecked()
 
-        pattern = os.path.join(self.directory, f"{file_prefix}%0{int(num_digits)}d.{extension}")
+        frame_paths = self._load_frame_paths()
 
-        frames = lib.load_frames(pattern)
+        can_fit, error_message = self._check_atlas_fit(atlas_width, atlas_height, frame_skip, len(frame_paths))
+        if not can_fit:
+            QMessageBox.critical(self, self.tr('Error'), error_message)
+            return
+
+        frames = lib.load_frames(frame_paths)
 
         if not frames:
             QMessageBox.critical(self, self.tr('Error'), self.tr('No frames loaded. Check the file pattern and paths.'))
-            return
-
-        can_fit, error_message = self._check_atlas_fit(atlas_width, atlas_height, frame_skip, len(frames))
-        if not can_fit:
-            QMessageBox.critical(self, self.tr('Error'), error_message)
             return
 
         motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())

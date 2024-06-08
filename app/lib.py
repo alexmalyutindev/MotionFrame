@@ -30,12 +30,11 @@ def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, mo
 
     return EncodeResult(color_atlas, motion_atlas, flow_directions, max_strength, total_frames)
 
-def load_frames(pattern):
+def load_frames(frame_paths):
     frames = []
     idx = 1
 
-    while True:
-        file_path = pattern % idx
+    for file_path in frame_paths:
         idx += 1
         if not os.path.exists(file_path):
             break
@@ -43,7 +42,7 @@ def load_frames(pattern):
         frame = imageio.imread(file_path)
         if frame is None:
             print(f'Image could not be loaded: {file_path}')
-            break
+            continue
 
         channels = channel_count(frame)
         if channels >= 3:
