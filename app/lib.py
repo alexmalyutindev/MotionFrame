@@ -152,11 +152,6 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
     height, width = frames[0].shape[:2]
     motion_atlas = np.zeros([atlas_height * height, atlas_width * width, 2], dtype=np.float32)
 
-    # Zero motion vector is mid value except for SideFx Labs R8G8
-#    if motion_vector_encoding != MotionVectorEncoding.SIDEFX_LABS_R8G8:
-#        motion_atlas[:,:,1] = 127
-#        motion_atlas[:,:,2] = 127
-
     # Image for motion vector directions
     flow_directions = np.zeros([motion_atlas.shape[0], motion_atlas.shape[1], 3], dtype=np.uint8)
 
@@ -253,7 +248,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
         _blit_image(flow, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
 
     if halve_motion_vector:
-        motion_atlas = _halve_motion_vectors(motion_atlas)
+        motion_atlas = cv2.resize(motion_atlas, (motion_atlas.shape[1]//2, motion_atlas.shape[0]//2), interpolation=cv2.INTER_LINEAR)
 
     # Encode motion to a texture
     r, g = _encode_motion_vector(motion_vector_encoding, motion_atlas, max_strength)
@@ -327,28 +322,6 @@ def _update_max_strength(flow, motion_vector_encoding, max_strength):
         max_strength = max(max_strength, np.abs(flow[..., 0]).max())
         max_strength = max(max_strength, np.abs(flow[..., 1]).max())
     return max_strength
-
-def _halve_motion_vectors(vectors):
-    # Reshape the array to 4D: (new_x, 2, new_y, 2, 2)
-    reshaped_vectors = vectors.reshape(vectors.shape[0]//2, 2, vectors.shape[1]//2, 2, 2)
-
-    # Calculate the magnitudes and angles of the vectors
-    r_values = np.sqrt(np.sum(reshaped_vectors**2, axis=-1))
-    theta_values = np.arctan2(reshaped_vectors[..., 1], reshaped_vectors[..., 0])
-
-    # Calculate the average magnitude and angle in each 2x2 block
-    avgR = np.mean(r_values, axis=(1, 3))
-    avgTheta = np.arctan2(np.sum(np.sin(theta_values) * r_values, axis=(1, 3)),
-                          np.sum(np.cos(theta_values) * r_values, axis=(1, 3)))
-
-    # Convert the average magnitude and angle back to x and y components
-    avgX = avgR * np.cos(avgTheta)
-    avgY = avgR * np.sin(avgTheta)
-
-    # Stack the x and y components to form the result
-    result = np.stack((avgX, avgY), axis=-1)
-
-    return result
 
 def bgr_to_rgb(image):
     channels = channel_count(image)

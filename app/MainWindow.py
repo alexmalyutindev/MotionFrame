@@ -16,16 +16,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
-    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-    QMainWindow, QPushButton, QRadioButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QSpinBox, QTabWidget,
-    QVBoxLayout, QWidget)
+    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+    QLineEdit, QMainWindow, QPushButton, QRadioButton,
+    QScrollArea, QSizePolicy, QSpacerItem, QSpinBox,
+    QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_MotionFrame(object):
     def setupUi(self, MotionFrame):
         if not MotionFrame.objectName():
             MotionFrame.setObjectName(u"MotionFrame")
-        MotionFrame.resize(1584, 989)
+        MotionFrame.resize(1584, 991)
         self.central = QWidget(MotionFrame)
         self.central.setObjectName(u"central")
         self.horizontalLayout = QHBoxLayout(self.central)
@@ -35,9 +35,17 @@ class Ui_MotionFrame(object):
         self.form_config = QFormLayout()
         self.form_config.setObjectName(u"form_config")
         self.form_config.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        self.form_config.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
         self.label_language = QLabel(self.central)
         self.label_language.setObjectName(u"label_language")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_language.sizePolicy().hasHeightForWidth())
+        self.label_language.setSizePolicy(sizePolicy)
+        self.label_language.setMinimumSize(QSize(200, 0))
         self.label_language.setTextFormat(Qt.PlainText)
+        self.label_language.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.form_config.setWidget(0, QFormLayout.LabelRole, self.label_language)
 
@@ -59,168 +67,270 @@ class Ui_MotionFrame(object):
 
         self.form_config.setLayout(0, QFormLayout.FieldRole, self.layout_language)
 
-        self.button_file_browse = QPushButton(self.central)
+
+        self.layout_left.addLayout(self.form_config)
+
+        self.groupbox_file_input = QGroupBox(self.central)
+        self.groupbox_file_input.setObjectName(u"groupbox_file_input")
+        self.formLayout = QFormLayout(self.groupbox_file_input)
+        self.formLayout.setObjectName(u"formLayout")
+        self.formLayout.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
+        self.button_file_browse = QPushButton(self.groupbox_file_input)
         self.button_file_browse.setObjectName(u"button_file_browse")
         self.button_file_browse.setMaximumSize(QSize(221, 32))
 
-        self.form_config.setWidget(1, QFormLayout.FieldRole, self.button_file_browse)
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.button_file_browse)
 
-        self.label_directory = QLabel(self.central)
+        self.label_directory = QLabel(self.groupbox_file_input)
         self.label_directory.setObjectName(u"label_directory")
+        sizePolicy.setHeightForWidth(self.label_directory.sizePolicy().hasHeightForWidth())
+        self.label_directory.setSizePolicy(sizePolicy)
+        self.label_directory.setMinimumSize(QSize(200, 0))
         self.label_directory.setTextFormat(Qt.PlainText)
+        self.label_directory.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(2, QFormLayout.LabelRole, self.label_directory)
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_directory)
 
-        self.text_directory = QLineEdit(self.central)
+        self.text_directory = QLineEdit(self.groupbox_file_input)
         self.text_directory.setObjectName(u"text_directory")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.text_directory.sizePolicy().hasHeightForWidth())
+        self.text_directory.setSizePolicy(sizePolicy1)
+        self.text_directory.setMinimumSize(QSize(200, 0))
+        self.text_directory.setBaseSize(QSize(0, 0))
 
-        self.form_config.setWidget(2, QFormLayout.FieldRole, self.text_directory)
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.text_directory)
 
-        self.label_file_prefix = QLabel(self.central)
+        self.label_file_prefix = QLabel(self.groupbox_file_input)
         self.label_file_prefix.setObjectName(u"label_file_prefix")
+        sizePolicy.setHeightForWidth(self.label_file_prefix.sizePolicy().hasHeightForWidth())
+        self.label_file_prefix.setSizePolicy(sizePolicy)
+        self.label_file_prefix.setMinimumSize(QSize(200, 0))
         self.label_file_prefix.setTextFormat(Qt.PlainText)
+        self.label_file_prefix.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(3, QFormLayout.LabelRole, self.label_file_prefix)
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label_file_prefix)
 
-        self.text_file_prefix = QLineEdit(self.central)
+        self.text_file_prefix = QLineEdit(self.groupbox_file_input)
         self.text_file_prefix.setObjectName(u"text_file_prefix")
+        sizePolicy1.setHeightForWidth(self.text_file_prefix.sizePolicy().hasHeightForWidth())
+        self.text_file_prefix.setSizePolicy(sizePolicy1)
+        self.text_file_prefix.setMinimumSize(QSize(200, 0))
         self.text_file_prefix.setText(u"flipbook_")
 
-        self.form_config.setWidget(3, QFormLayout.FieldRole, self.text_file_prefix)
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.text_file_prefix)
 
-        self.label_sequence_digits = QLabel(self.central)
+        self.label_extension = QLabel(self.groupbox_file_input)
+        self.label_extension.setObjectName(u"label_extension")
+        sizePolicy.setHeightForWidth(self.label_extension.sizePolicy().hasHeightForWidth())
+        self.label_extension.setSizePolicy(sizePolicy)
+        self.label_extension.setMinimumSize(QSize(200, 0))
+        self.label_extension.setTextFormat(Qt.PlainText)
+        self.label_extension.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.label_extension)
+
+        self.text_extension = QLineEdit(self.groupbox_file_input)
+        self.text_extension.setObjectName(u"text_extension")
+        sizePolicy1.setHeightForWidth(self.text_extension.sizePolicy().hasHeightForWidth())
+        self.text_extension.setSizePolicy(sizePolicy1)
+        self.text_extension.setMinimumSize(QSize(200, 0))
+        self.text_extension.setText(u"tga")
+
+        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.text_extension)
+
+        self.label_sequence_digits = QLabel(self.groupbox_file_input)
         self.label_sequence_digits.setObjectName(u"label_sequence_digits")
+        sizePolicy.setHeightForWidth(self.label_sequence_digits.sizePolicy().hasHeightForWidth())
+        self.label_sequence_digits.setSizePolicy(sizePolicy)
+        self.label_sequence_digits.setMinimumSize(QSize(200, 0))
         self.label_sequence_digits.setTextFormat(Qt.PlainText)
+        self.label_sequence_digits.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(4, QFormLayout.LabelRole, self.label_sequence_digits)
+        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.label_sequence_digits)
 
-        self.number_sequence_digits = QSpinBox(self.central)
+        self.number_sequence_digits = QSpinBox(self.groupbox_file_input)
         self.number_sequence_digits.setObjectName(u"number_sequence_digits")
         self.number_sequence_digits.setMinimum(1)
         self.number_sequence_digits.setMaximum(10)
         self.number_sequence_digits.setValue(3)
 
-        self.form_config.setWidget(4, QFormLayout.FieldRole, self.number_sequence_digits)
+        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.number_sequence_digits)
 
-        self.label_extension = QLabel(self.central)
-        self.label_extension.setObjectName(u"label_extension")
-        self.label_extension.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(5, QFormLayout.LabelRole, self.label_extension)
+        self.layout_left.addWidget(self.groupbox_file_input)
 
-        self.text_extension = QLineEdit(self.central)
-        self.text_extension.setObjectName(u"text_extension")
-        self.text_extension.setText(u"tga")
+        self.groupbox_atlas = QGroupBox(self.central)
+        self.groupbox_atlas.setObjectName(u"groupbox_atlas")
+        self.formLayout_2 = QFormLayout(self.groupbox_atlas)
+        self.formLayout_2.setObjectName(u"formLayout_2")
+        self.formLayout_2.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
+        self.label_atlas_resolution_width = QLabel(self.groupbox_atlas)
+        self.label_atlas_resolution_width.setObjectName(u"label_atlas_resolution_width")
+        sizePolicy.setHeightForWidth(self.label_atlas_resolution_width.sizePolicy().hasHeightForWidth())
+        self.label_atlas_resolution_width.setSizePolicy(sizePolicy)
+        self.label_atlas_resolution_width.setMinimumSize(QSize(200, 0))
+        self.label_atlas_resolution_width.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(5, QFormLayout.FieldRole, self.text_extension)
+        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_atlas_resolution_width)
 
-        self.label_atlas_width = QLabel(self.central)
+        self.comboBox = QComboBox(self.groupbox_atlas)
+        self.comboBox.addItem(u"32")
+        self.comboBox.addItem(u"64")
+        self.comboBox.addItem(u"128")
+        self.comboBox.addItem(u"256")
+        self.comboBox.addItem(u"512")
+        self.comboBox.addItem(u"1024")
+        self.comboBox.addItem(u"2048")
+        self.comboBox.addItem(u"4096")
+        self.comboBox.addItem(u"8192")
+        self.comboBox.addItem(u"16384")
+        self.comboBox.setObjectName(u"comboBox")
+        self.comboBox.setCurrentText(u"2048")
+
+        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.comboBox)
+
+        self.label_atlas_width = QLabel(self.groupbox_atlas)
         self.label_atlas_width.setObjectName(u"label_atlas_width")
+        sizePolicy.setHeightForWidth(self.label_atlas_width.sizePolicy().hasHeightForWidth())
+        self.label_atlas_width.setSizePolicy(sizePolicy)
+        self.label_atlas_width.setMinimumSize(QSize(200, 0))
         self.label_atlas_width.setTextFormat(Qt.PlainText)
+        self.label_atlas_width.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(6, QFormLayout.LabelRole, self.label_atlas_width)
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_atlas_width)
 
-        self.number_atlas_width = QSpinBox(self.central)
+        self.number_atlas_width = QSpinBox(self.groupbox_atlas)
         self.number_atlas_width.setObjectName(u"number_atlas_width")
         self.number_atlas_width.setMinimum(1)
         self.number_atlas_width.setMaximum(64)
         self.number_atlas_width.setValue(8)
 
-        self.form_config.setWidget(6, QFormLayout.FieldRole, self.number_atlas_width)
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.number_atlas_width)
 
-        self.label_atlas_height = QLabel(self.central)
+        self.label_atlas_height = QLabel(self.groupbox_atlas)
         self.label_atlas_height.setObjectName(u"label_atlas_height")
+        sizePolicy.setHeightForWidth(self.label_atlas_height.sizePolicy().hasHeightForWidth())
+        self.label_atlas_height.setSizePolicy(sizePolicy)
+        self.label_atlas_height.setMinimumSize(QSize(200, 0))
         self.label_atlas_height.setTextFormat(Qt.PlainText)
+        self.label_atlas_height.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(7, QFormLayout.LabelRole, self.label_atlas_height)
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_atlas_height)
 
-        self.number_atlas_height = QSpinBox(self.central)
+        self.number_atlas_height = QSpinBox(self.groupbox_atlas)
         self.number_atlas_height.setObjectName(u"number_atlas_height")
         self.number_atlas_height.setMinimum(1)
         self.number_atlas_height.setMaximum(64)
         self.number_atlas_height.setValue(8)
 
-        self.form_config.setWidget(7, QFormLayout.FieldRole, self.number_atlas_height)
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.number_atlas_height)
 
-        self.label_frame_skip = QLabel(self.central)
+
+        self.layout_left.addWidget(self.groupbox_atlas)
+
+        self.groupbox_animation = QGroupBox(self.central)
+        self.groupbox_animation.setObjectName(u"groupbox_animation")
+        self.formLayout_3 = QFormLayout(self.groupbox_animation)
+        self.formLayout_3.setObjectName(u"formLayout_3")
+        self.formLayout_3.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
+        self.label_frame_skip = QLabel(self.groupbox_animation)
         self.label_frame_skip.setObjectName(u"label_frame_skip")
+        sizePolicy.setHeightForWidth(self.label_frame_skip.sizePolicy().hasHeightForWidth())
+        self.label_frame_skip.setSizePolicy(sizePolicy)
+        self.label_frame_skip.setMinimumSize(QSize(200, 0))
         self.label_frame_skip.setTextFormat(Qt.PlainText)
+        self.label_frame_skip.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(8, QFormLayout.LabelRole, self.label_frame_skip)
+        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.label_frame_skip)
 
-        self.number_frame_skip = QSpinBox(self.central)
+        self.number_frame_skip = QSpinBox(self.groupbox_animation)
         self.number_frame_skip.setObjectName(u"number_frame_skip")
         self.number_frame_skip.setMinimum(0)
         self.number_frame_skip.setMaximum(128)
         self.number_frame_skip.setValue(0)
 
-        self.form_config.setWidget(8, QFormLayout.FieldRole, self.number_frame_skip)
+        self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.number_frame_skip)
 
-        self.label_analyze_skipped_frames = QLabel(self.central)
+        self.label_analyze_skipped_frames = QLabel(self.groupbox_animation)
         self.label_analyze_skipped_frames.setObjectName(u"label_analyze_skipped_frames")
+        sizePolicy.setHeightForWidth(self.label_analyze_skipped_frames.sizePolicy().hasHeightForWidth())
+        self.label_analyze_skipped_frames.setSizePolicy(sizePolicy)
+        self.label_analyze_skipped_frames.setMinimumSize(QSize(200, 0))
+        self.label_analyze_skipped_frames.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(9, QFormLayout.LabelRole, self.label_analyze_skipped_frames)
+        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.label_analyze_skipped_frames)
 
-        self.checkbox_analyze_skipped_frames = QCheckBox(self.central)
+        self.checkbox_analyze_skipped_frames = QCheckBox(self.groupbox_animation)
         self.checkbox_analyze_skipped_frames.setObjectName(u"checkbox_analyze_skipped_frames")
         self.checkbox_analyze_skipped_frames.setText(u"")
         self.checkbox_analyze_skipped_frames.setChecked(True)
 
-        self.form_config.setWidget(9, QFormLayout.FieldRole, self.checkbox_analyze_skipped_frames)
+        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.checkbox_analyze_skipped_frames)
 
-        self.label_loop = QLabel(self.central)
+        self.label_loop = QLabel(self.groupbox_animation)
         self.label_loop.setObjectName(u"label_loop")
+        sizePolicy.setHeightForWidth(self.label_loop.sizePolicy().hasHeightForWidth())
+        self.label_loop.setSizePolicy(sizePolicy)
+        self.label_loop.setMinimumSize(QSize(200, 0))
+        self.label_loop.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(10, QFormLayout.LabelRole, self.label_loop)
+        self.formLayout_3.setWidget(2, QFormLayout.LabelRole, self.label_loop)
 
-        self.checkbox_loop = QCheckBox(self.central)
+        self.checkbox_loop = QCheckBox(self.groupbox_animation)
         self.checkbox_loop.setObjectName(u"checkbox_loop")
         self.checkbox_loop.setText(u"")
         self.checkbox_loop.setCheckable(True)
 
-        self.form_config.setWidget(10, QFormLayout.FieldRole, self.checkbox_loop)
+        self.formLayout_3.setWidget(2, QFormLayout.FieldRole, self.checkbox_loop)
 
-        self.label_force_pot_width = QLabel(self.central)
-        self.label_force_pot_width.setObjectName(u"label_force_pot_width")
 
-        self.form_config.setWidget(11, QFormLayout.LabelRole, self.label_force_pot_width)
+        self.layout_left.addWidget(self.groupbox_animation)
 
-        self.label_downsample_motion_vector = QLabel(self.central)
+        self.groupbox_export = QGroupBox(self.central)
+        self.groupbox_export.setObjectName(u"groupbox_export")
+        self.formLayout_4 = QFormLayout(self.groupbox_export)
+        self.formLayout_4.setObjectName(u"formLayout_4")
+        self.formLayout_4.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
+        self.label_downsample_motion_vector = QLabel(self.groupbox_export)
         self.label_downsample_motion_vector.setObjectName(u"label_downsample_motion_vector")
+        sizePolicy.setHeightForWidth(self.label_downsample_motion_vector.sizePolicy().hasHeightForWidth())
+        self.label_downsample_motion_vector.setSizePolicy(sizePolicy)
+        self.label_downsample_motion_vector.setMinimumSize(QSize(200, 0))
         self.label_downsample_motion_vector.setTextFormat(Qt.PlainText)
+        self.label_downsample_motion_vector.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(12, QFormLayout.LabelRole, self.label_downsample_motion_vector)
+        self.formLayout_4.setWidget(0, QFormLayout.LabelRole, self.label_downsample_motion_vector)
 
-        self.checkbox_downsample_motion_vector = QCheckBox(self.central)
+        self.checkbox_downsample_motion_vector = QCheckBox(self.groupbox_export)
         self.checkbox_downsample_motion_vector.setObjectName(u"checkbox_downsample_motion_vector")
         self.checkbox_downsample_motion_vector.setText(u"")
         self.checkbox_downsample_motion_vector.setChecked(True)
 
-        self.form_config.setWidget(12, QFormLayout.FieldRole, self.checkbox_downsample_motion_vector)
+        self.formLayout_4.setWidget(0, QFormLayout.FieldRole, self.checkbox_downsample_motion_vector)
 
-        self.label_motion_vector_encoding = QLabel(self.central)
+        self.label_motion_vector_encoding = QLabel(self.groupbox_export)
         self.label_motion_vector_encoding.setObjectName(u"label_motion_vector_encoding")
+        sizePolicy.setHeightForWidth(self.label_motion_vector_encoding.sizePolicy().hasHeightForWidth())
+        self.label_motion_vector_encoding.setSizePolicy(sizePolicy)
+        self.label_motion_vector_encoding.setMinimumSize(QSize(200, 0))
         self.label_motion_vector_encoding.setTextFormat(Qt.PlainText)
+        self.label_motion_vector_encoding.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.form_config.setWidget(13, QFormLayout.LabelRole, self.label_motion_vector_encoding)
+        self.formLayout_4.setWidget(1, QFormLayout.LabelRole, self.label_motion_vector_encoding)
 
-        self.combo_motion_vector_encoding = QComboBox(self.central)
+        self.combo_motion_vector_encoding = QComboBox(self.groupbox_export)
         self.combo_motion_vector_encoding.addItem(u"R8G8 Remapped to 0-1")
         self.combo_motion_vector_encoding.addItem(u"SideFX Labs R8G8 Encoding")
         self.combo_motion_vector_encoding.addItem(u"R16G16")
         self.combo_motion_vector_encoding.setObjectName(u"combo_motion_vector_encoding")
 
-        self.form_config.setWidget(13, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
-
-        self.checkbox_force_pot_width = QCheckBox(self.central)
-        self.checkbox_force_pot_width.setObjectName(u"checkbox_force_pot_width")
-        self.checkbox_force_pot_width.setText(u"")
-        self.checkbox_force_pot_width.setChecked(True)
-
-        self.form_config.setWidget(11, QFormLayout.FieldRole, self.checkbox_force_pot_width)
+        self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
 
 
-        self.layout_left.addLayout(self.form_config)
+        self.layout_left.addWidget(self.groupbox_export)
 
         self.button_generate = QPushButton(self.central)
         self.button_generate.setObjectName(u"button_generate")
@@ -229,8 +339,13 @@ class Ui_MotionFrame(object):
 
         self.form_input_frames = QFormLayout()
         self.form_input_frames.setObjectName(u"form_input_frames")
+        self.form_input_frames.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
         self.label_input_number_of_frames = QLabel(self.central)
         self.label_input_number_of_frames.setObjectName(u"label_input_number_of_frames")
+        sizePolicy.setHeightForWidth(self.label_input_number_of_frames.sizePolicy().hasHeightForWidth())
+        self.label_input_number_of_frames.setSizePolicy(sizePolicy)
+        self.label_input_number_of_frames.setMinimumSize(QSize(200, 0))
+        self.label_input_number_of_frames.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.form_input_frames.setWidget(0, QFormLayout.LabelRole, self.label_input_number_of_frames)
 
@@ -242,6 +357,10 @@ class Ui_MotionFrame(object):
 
         self.label_optimal_input_number_of_frames = QLabel(self.central)
         self.label_optimal_input_number_of_frames.setObjectName(u"label_optimal_input_number_of_frames")
+        sizePolicy.setHeightForWidth(self.label_optimal_input_number_of_frames.sizePolicy().hasHeightForWidth())
+        self.label_optimal_input_number_of_frames.setSizePolicy(sizePolicy)
+        self.label_optimal_input_number_of_frames.setMinimumSize(QSize(200, 0))
+        self.label_optimal_input_number_of_frames.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.form_input_frames.setWidget(1, QFormLayout.LabelRole, self.label_optimal_input_number_of_frames)
 
@@ -289,7 +408,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 1061, 379))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 1004, 380))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -313,7 +432,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 1061, 379))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 98, 40))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -337,7 +456,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 1061, 379))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 98, 40))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
@@ -414,9 +533,33 @@ class Ui_MotionFrame(object):
 
         self.horizontalLayout.setStretch(1, 1)
         MotionFrame.setCentralWidget(self.central)
+        QWidget.setTabOrder(self.radio_button_language_english, self.radio_button_language_japanese)
+        QWidget.setTabOrder(self.radio_button_language_japanese, self.button_file_browse)
+        QWidget.setTabOrder(self.button_file_browse, self.text_directory)
+        QWidget.setTabOrder(self.text_directory, self.text_file_prefix)
+        QWidget.setTabOrder(self.text_file_prefix, self.text_extension)
+        QWidget.setTabOrder(self.text_extension, self.number_sequence_digits)
+        QWidget.setTabOrder(self.number_sequence_digits, self.comboBox)
+        QWidget.setTabOrder(self.comboBox, self.number_atlas_width)
+        QWidget.setTabOrder(self.number_atlas_width, self.number_atlas_height)
+        QWidget.setTabOrder(self.number_atlas_height, self.number_frame_skip)
+        QWidget.setTabOrder(self.number_frame_skip, self.checkbox_analyze_skipped_frames)
+        QWidget.setTabOrder(self.checkbox_analyze_skipped_frames, self.checkbox_loop)
+        QWidget.setTabOrder(self.checkbox_loop, self.checkbox_downsample_motion_vector)
+        QWidget.setTabOrder(self.checkbox_downsample_motion_vector, self.combo_motion_vector_encoding)
+        QWidget.setTabOrder(self.combo_motion_vector_encoding, self.button_generate)
+        QWidget.setTabOrder(self.button_generate, self.button_update_frames)
+        QWidget.setTabOrder(self.button_update_frames, self.tabs_result)
+        QWidget.setTabOrder(self.tabs_result, self.scroll_color)
+        QWidget.setTabOrder(self.scroll_color, self.scroll_motion_vector)
+        QWidget.setTabOrder(self.scroll_motion_vector, self.scroll_visualization)
+        QWidget.setTabOrder(self.scroll_visualization, self.text_motion_strength)
+        QWidget.setTabOrder(self.text_motion_strength, self.button_copy_motion_strength)
+        QWidget.setTabOrder(self.button_copy_motion_strength, self.button_save)
 
         self.retranslateUi(MotionFrame)
 
+        self.comboBox.setCurrentIndex(6)
         self.tabs_result.setCurrentIndex(0)
 
 
@@ -426,17 +569,22 @@ class Ui_MotionFrame(object):
     def retranslateUi(self, MotionFrame):
         MotionFrame.setWindowTitle(QCoreApplication.translate("MotionFrame", u"MainWindow", None))
         self.label_language.setText(QCoreApplication.translate("MotionFrame", u"Language:", None))
+        self.groupbox_file_input.setTitle(QCoreApplication.translate("MotionFrame", u"File Input", None))
         self.button_file_browse.setText(QCoreApplication.translate("MotionFrame", u"Browse\u2026", None))
         self.label_directory.setText(QCoreApplication.translate("MotionFrame", u"Directory:", None))
         self.label_file_prefix.setText(QCoreApplication.translate("MotionFrame", u"File Prefix:", None))
-        self.label_sequence_digits.setText(QCoreApplication.translate("MotionFrame", u"Sequence Digits:", None))
         self.label_extension.setText(QCoreApplication.translate("MotionFrame", u"Extension:", None))
-        self.label_atlas_width.setText(QCoreApplication.translate("MotionFrame", u"Atlas Width:", None))
-        self.label_atlas_height.setText(QCoreApplication.translate("MotionFrame", u"Atlas Height:", None))
+        self.label_sequence_digits.setText(QCoreApplication.translate("MotionFrame", u"Sequence Digits:", None))
+        self.groupbox_atlas.setTitle(QCoreApplication.translate("MotionFrame", u"Atlas", None))
+        self.label_atlas_resolution_width.setText(QCoreApplication.translate("MotionFrame", u"Pixel Width:", None))
+
+        self.label_atlas_width.setText(QCoreApplication.translate("MotionFrame", u"Columns (X):", None))
+        self.label_atlas_height.setText(QCoreApplication.translate("MotionFrame", u"Rows (Y):", None))
+        self.groupbox_animation.setTitle(QCoreApplication.translate("MotionFrame", u"Animation", None))
         self.label_frame_skip.setText(QCoreApplication.translate("MotionFrame", u"Frame Skip:", None))
         self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
         self.label_loop.setText(QCoreApplication.translate("MotionFrame", u"Loop:", None))
-        self.label_force_pot_width.setText(QCoreApplication.translate("MotionFrame", u"Force POT Width:", None))
+        self.groupbox_export.setTitle(QCoreApplication.translate("MotionFrame", u"Export", None))
         self.label_downsample_motion_vector.setText(QCoreApplication.translate("MotionFrame", u"Downsample Motion Vector:", None))
         self.label_motion_vector_encoding.setText(QCoreApplication.translate("MotionFrame", u"Motion Vector Encoding:", None))
 

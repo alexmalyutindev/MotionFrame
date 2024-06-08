@@ -17,7 +17,7 @@
         <translation type="vanished">ディレクトリ</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="65"/>
+        <location filename="../MainWindow.ui" line="94"/>
         <source>Browse…</source>
         <translation>参照…</translation>
     </message>
@@ -54,47 +54,50 @@
         <translation type="vanished">Motion Vector エンコード</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="28"/>
+        <location filename="../MainWindow.ui" line="43"/>
         <source>Language:</source>
         <translation>言語:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="72"/>
+        <location filename="../MainWindow.ui" line="79"/>
+        <source>File Input</source>
+        <translation>ファイル入力</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="113"/>
         <source>Directory:</source>
         <translation>ディレクトリ:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="85"/>
+        <location filename="../MainWindow.ui" line="160"/>
         <source>File Prefix:</source>
         <translation>ファイル接頭辞:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="102"/>
+        <location filename="../MainWindow.ui" line="248"/>
         <source>Sequence Digits:</source>
         <translation>連番桁数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="125"/>
+        <location filename="../MainWindow.ui" line="204"/>
         <source>Extension:</source>
         <translation>拡張子:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="142"/>
         <source>Atlas Width:</source>
-        <translation>アトラス幅:</translation>
+        <translation type="vanished">アトラス幅:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="165"/>
         <source>Atlas Height:</source>
-        <translation>アトラス高さ:</translation>
+        <translation type="vanished">アトラス高さ:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="188"/>
+        <location filename="../MainWindow.ui" line="468"/>
         <source>Frame Skip:</source>
         <translation>フレームスキップ数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="228"/>
+        <location filename="../MainWindow.ui" line="538"/>
         <source>Loop:</source>
         <translation>ループ:</translation>
     </message>
@@ -103,27 +106,26 @@
         <translation type="vanished">モーションテクスチャスケール:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="272"/>
+        <location filename="../MainWindow.ui" line="617"/>
         <source>Motion Vector Encoding:</source>
         <translation>Motion Vector エンコード:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="211"/>
+        <location filename="../MainWindow.ui" line="506"/>
         <source>Analyze Skipped Frames:</source>
         <translation>フレームスキップ解析:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="245"/>
         <source>Force POT Width:</source>
-        <translation>POT 解像度幅を強制:</translation>
+        <translation type="vanished">POT 解像度幅を強制:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="252"/>
+        <location filename="../MainWindow.ui" line="582"/>
         <source>Downsample Motion Vector:</source>
         <translation>低解像度モーションベクター:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="313"/>
+        <location filename="../MainWindow.ui" line="652"/>
         <source>Generate</source>
         <translation>生成</translation>
     </message>
@@ -132,17 +134,17 @@
         <translation type="vanished">推奨入力フレーム数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="322"/>
+        <location filename="../MainWindow.ui" line="676"/>
         <source>Input Number of Frames:</source>
         <translation>入力フレーム数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="336"/>
+        <location filename="../MainWindow.ui" line="705"/>
         <source>Optimal Input Number of Frames:</source>
         <translation>最適な入力フレーム数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="352"/>
+        <location filename="../MainWindow.ui" line="724"/>
         <source>Recount Input Frames</source>
         <translation>入力フレーム数を再計算</translation>
     </message>
@@ -151,37 +153,67 @@
         <translation type="vanished">更新</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="396"/>
+        <location filename="../MainWindow.ui" line="277"/>
+        <source>Atlas</source>
+        <translation>アトラス</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="298"/>
+        <source>Pixel Width:</source>
+        <translation>ピクセル幅:</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="380"/>
+        <source>Columns (X):</source>
+        <translation>列 (Ｘ):</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="418"/>
+        <source>Rows (Y):</source>
+        <translation>行 (Y):</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="447"/>
+        <source>Animation</source>
+        <translation>アニメーション</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="561"/>
+        <source>Export</source>
+        <translation>出力</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="768"/>
         <source>Color</source>
         <translation>カラー</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="435"/>
+        <location filename="../MainWindow.ui" line="807"/>
         <source>Motion Vector</source>
         <translation>モーションベクター</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="474"/>
+        <location filename="../MainWindow.ui" line="846"/>
         <source>Visualization</source>
         <translation>可視化</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="518"/>
+        <location filename="../MainWindow.ui" line="890"/>
         <source>Motion Strength:</source>
         <translation>モーション強度:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="528"/>
+        <location filename="../MainWindow.ui" line="900"/>
         <source>Discarded Trailing Frames:</source>
         <translation>末尾破棄フレーム数:</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="557"/>
+        <location filename="../MainWindow.ui" line="929"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="566"/>
+        <location filename="../MainWindow.ui" line="938"/>
         <source>Total Frames:</source>
         <translation>フレーム数:</translation>
     </message>
@@ -194,7 +226,7 @@
         <translation type="vanished">モーション強度 V</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="582"/>
+        <location filename="../MainWindow.ui" line="954"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
