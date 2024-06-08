@@ -2,6 +2,7 @@ from enum import Enum
 import os
 import cv2
 import numpy as np
+import math
 import imageio.v3 as imageio
 
 class MotionVectorEncoding(Enum):
@@ -36,13 +37,9 @@ def decode_atlas(atlas, atlas_width, atlas_height):
 
     return frames
 
-def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding, is_loop, analyze_skipped_frames):
+def encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector):
     color_atlas, total_frames = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
-    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames)
-
-    motion_scale = min(max(motion_scale, 0.01), 1.0)
-    if motion_scale < 1.0:
-        motion_atlas = cv2.resize(motion_atlas, None, fx=motion_scale, fy=motion_scale)
+    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector)
 
     return EncodeResult(color_atlas, motion_atlas, flow_directions, max_strength, total_frames)
 
@@ -151,16 +148,17 @@ def _encode_motion_vector(method, flow, max_strength):
 
     return r, g
 
-def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames):
+def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector):
     height, width = frames[0].shape[:2]
-    motion_atlas = np.zeros([atlas_height * height, atlas_width * width, 3], dtype=np.uint8)
+    motion_atlas = np.zeros([atlas_height * height, atlas_width * width, 2], dtype=np.float32)
 
     # Zero motion vector is mid value except for SideFx Labs R8G8
-    if motion_vector_encoding != MotionVectorEncoding.SIDEFX_LABS_R8G8:
-        motion_atlas[:,:,1] = 127
-        motion_atlas[:,:,2] = 127
+#    if motion_vector_encoding != MotionVectorEncoding.SIDEFX_LABS_R8G8:
+#        motion_atlas[:,:,1] = 127
+#        motion_atlas[:,:,2] = 127
 
-    flow_directions = np.zeros_like(motion_atlas)  # Image for motion vector directions
+    # Image for motion vector directions
+    flow_directions = np.zeros([motion_atlas.shape[0], motion_atlas.shape[1], 3], dtype=np.uint8)
 
     max_strength = 0
     frame_idx = 1
@@ -251,15 +249,17 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
 
     flow_frames.append(flow)
 
-    # Encode motion to a texture
     for atlas_idx, flow in enumerate(flow_frames):
-        r, g = _encode_motion_vector(motion_vector_encoding, flow, max_strength)
+        _blit_image(flow, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
 
-        motion_vector = np.zeros([height, width, 3], dtype=np.uint8)
-        motion_vector[..., 2] = np.clip(r, 0, 255).astype(np.uint8)
-        motion_vector[..., 1] = np.clip(g, 0, 255).astype(np.uint8)
+    if halve_motion_vector:
+        motion_atlas = _halve_motion_vectors(motion_atlas)
 
-        _blit_image(motion_vector, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
+    # Encode motion to a texture
+    r, g = _encode_motion_vector(motion_vector_encoding, motion_atlas, max_strength)
+    motion_atlas = np.zeros([motion_atlas.shape[0], motion_atlas.shape[1], 3], dtype=np.uint8)
+    motion_atlas[..., 2] = np.clip(r, 0, 255).astype(np.uint8)
+    motion_atlas[..., 1] = np.clip(g, 0, 255).astype(np.uint8)
 
     return motion_atlas, flow_directions, max_strength
 
@@ -328,3 +328,38 @@ def _update_max_strength(flow, motion_vector_encoding, max_strength):
         max_strength = max(max_strength, np.abs(flow[..., 1]).max())
     return max_strength
 
+def _halve_motion_vectors(vectors):
+    # Reshape the array to 4D: (new_x, 2, new_y, 2, 2)
+    reshaped_vectors = vectors.reshape(vectors.shape[0]//2, 2, vectors.shape[1]//2, 2, 2)
+
+    # Calculate the magnitudes and angles of the vectors
+    r_values = np.sqrt(np.sum(reshaped_vectors**2, axis=-1))
+    theta_values = np.arctan2(reshaped_vectors[..., 1], reshaped_vectors[..., 0])
+
+    # Calculate the average magnitude and angle in each 2x2 block
+    avgR = np.mean(r_values, axis=(1, 3))
+    avgTheta = np.arctan2(np.sum(np.sin(theta_values) * r_values, axis=(1, 3)),
+                          np.sum(np.cos(theta_values) * r_values, axis=(1, 3)))
+
+    # Convert the average magnitude and angle back to x and y components
+    avgX = avgR * np.cos(avgTheta)
+    avgY = avgR * np.sin(avgTheta)
+
+    # Stack the x and y components to form the result
+    result = np.stack((avgX, avgY), axis=-1)
+
+    return result
+
+def bgr_to_rgb(image):
+    channels = channel_count(image)
+
+    if channels < 3:
+        return image
+
+    image_copy = np.zeros_like(image)
+    # BGR to RGB conversion
+    if channels == 3:
+        image_copy[..., [0, 1, 2]] = image[..., [2, 1, 0]]
+    elif channels == 4:
+        image_copy[..., [0, 1, 2, 3]] = image[..., [2, 1, 0, 3]]
+    return image_copy

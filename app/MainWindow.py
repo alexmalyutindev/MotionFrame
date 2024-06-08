@@ -15,17 +15,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox,
-    QFormLayout, QGridLayout, QHBoxLayout, QLabel,
-    QLineEdit, QMainWindow, QPushButton, QRadioButton,
-    QScrollArea, QSizePolicy, QSpacerItem, QSpinBox,
-    QTabWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
+    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+    QMainWindow, QPushButton, QRadioButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QSpinBox, QTabWidget,
+    QVBoxLayout, QWidget)
 
 class Ui_MotionFrame(object):
     def setupUi(self, MotionFrame):
         if not MotionFrame.objectName():
             MotionFrame.setObjectName(u"MotionFrame")
-        MotionFrame.resize(923, 651)
+        MotionFrame.resize(1584, 989)
         self.central = QWidget(MotionFrame)
         self.central.setObjectName(u"central")
         self.horizontalLayout = QHBoxLayout(self.central)
@@ -180,25 +180,29 @@ class Ui_MotionFrame(object):
 
         self.form_config.setWidget(10, QFormLayout.FieldRole, self.checkbox_loop)
 
-        self.label_scale = QLabel(self.central)
-        self.label_scale.setObjectName(u"label_scale")
-        self.label_scale.setTextFormat(Qt.PlainText)
+        self.label_force_pot_width = QLabel(self.central)
+        self.label_force_pot_width.setObjectName(u"label_force_pot_width")
 
-        self.form_config.setWidget(11, QFormLayout.LabelRole, self.label_scale)
+        self.form_config.setWidget(11, QFormLayout.LabelRole, self.label_force_pot_width)
 
-        self.number_scale = QDoubleSpinBox(self.central)
-        self.number_scale.setObjectName(u"number_scale")
-        self.number_scale.setMaximum(1.000000000000000)
-        self.number_scale.setSingleStep(0.100000000000000)
-        self.number_scale.setValue(1.000000000000000)
+        self.label_downsample_motion_vector = QLabel(self.central)
+        self.label_downsample_motion_vector.setObjectName(u"label_downsample_motion_vector")
+        self.label_downsample_motion_vector.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(11, QFormLayout.FieldRole, self.number_scale)
+        self.form_config.setWidget(12, QFormLayout.LabelRole, self.label_downsample_motion_vector)
+
+        self.checkbox_downsample_motion_vector = QCheckBox(self.central)
+        self.checkbox_downsample_motion_vector.setObjectName(u"checkbox_downsample_motion_vector")
+        self.checkbox_downsample_motion_vector.setText(u"")
+        self.checkbox_downsample_motion_vector.setChecked(True)
+
+        self.form_config.setWidget(12, QFormLayout.FieldRole, self.checkbox_downsample_motion_vector)
 
         self.label_motion_vector_encoding = QLabel(self.central)
         self.label_motion_vector_encoding.setObjectName(u"label_motion_vector_encoding")
         self.label_motion_vector_encoding.setTextFormat(Qt.PlainText)
 
-        self.form_config.setWidget(12, QFormLayout.LabelRole, self.label_motion_vector_encoding)
+        self.form_config.setWidget(13, QFormLayout.LabelRole, self.label_motion_vector_encoding)
 
         self.combo_motion_vector_encoding = QComboBox(self.central)
         self.combo_motion_vector_encoding.addItem(u"R8G8 Remapped to 0-1")
@@ -206,7 +210,14 @@ class Ui_MotionFrame(object):
         self.combo_motion_vector_encoding.addItem(u"R16G16")
         self.combo_motion_vector_encoding.setObjectName(u"combo_motion_vector_encoding")
 
-        self.form_config.setWidget(12, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
+        self.form_config.setWidget(13, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
+
+        self.checkbox_force_pot_width = QCheckBox(self.central)
+        self.checkbox_force_pot_width.setObjectName(u"checkbox_force_pot_width")
+        self.checkbox_force_pot_width.setText(u"")
+        self.checkbox_force_pot_width.setChecked(True)
+
+        self.form_config.setWidget(11, QFormLayout.FieldRole, self.checkbox_force_pot_width)
 
 
         self.layout_left.addLayout(self.form_config)
@@ -229,16 +240,16 @@ class Ui_MotionFrame(object):
 
         self.form_input_frames.setWidget(0, QFormLayout.FieldRole, self.label_input_number_of_frames_value)
 
-        self.label_preferred_input_number_of_frames = QLabel(self.central)
-        self.label_preferred_input_number_of_frames.setObjectName(u"label_preferred_input_number_of_frames")
+        self.label_optimal_input_number_of_frames = QLabel(self.central)
+        self.label_optimal_input_number_of_frames.setObjectName(u"label_optimal_input_number_of_frames")
 
-        self.form_input_frames.setWidget(1, QFormLayout.LabelRole, self.label_preferred_input_number_of_frames)
+        self.form_input_frames.setWidget(1, QFormLayout.LabelRole, self.label_optimal_input_number_of_frames)
 
-        self.label_preferred_input_number_of_frames_value = QLabel(self.central)
-        self.label_preferred_input_number_of_frames_value.setObjectName(u"label_preferred_input_number_of_frames_value")
-        self.label_preferred_input_number_of_frames_value.setText(u"0")
+        self.label_optimal_input_number_of_frames_value = QLabel(self.central)
+        self.label_optimal_input_number_of_frames_value.setObjectName(u"label_optimal_input_number_of_frames_value")
+        self.label_optimal_input_number_of_frames_value.setText(u"0")
 
-        self.form_input_frames.setWidget(1, QFormLayout.FieldRole, self.label_preferred_input_number_of_frames_value)
+        self.form_input_frames.setWidget(1, QFormLayout.FieldRole, self.label_optimal_input_number_of_frames_value)
 
 
         self.layout_left.addLayout(self.form_input_frames)
@@ -278,7 +289,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 417, 209))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 1061, 379))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -302,7 +313,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 417, 209))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 1061, 379))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -326,7 +337,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 417, 209))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 1061, 379))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
@@ -425,12 +436,13 @@ class Ui_MotionFrame(object):
         self.label_frame_skip.setText(QCoreApplication.translate("MotionFrame", u"Frame Skip:", None))
         self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
         self.label_loop.setText(QCoreApplication.translate("MotionFrame", u"Loop:", None))
-        self.label_scale.setText(QCoreApplication.translate("MotionFrame", u"Motion Texture Scale:", None))
+        self.label_force_pot_width.setText(QCoreApplication.translate("MotionFrame", u"Force POT Width:", None))
+        self.label_downsample_motion_vector.setText(QCoreApplication.translate("MotionFrame", u"Downsample Motion Vector:", None))
         self.label_motion_vector_encoding.setText(QCoreApplication.translate("MotionFrame", u"Motion Vector Encoding:", None))
 
         self.button_generate.setText(QCoreApplication.translate("MotionFrame", u"Generate", None))
         self.label_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Input Number of Frames:", None))
-        self.label_preferred_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Preferred Input Number of Frames:", None))
+        self.label_optimal_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Optimal Input Number of Frames:", None))
         self.button_update_frames.setText(QCoreApplication.translate("MotionFrame", u"Recount Input Frames", None))
         self.label_motion_vector.setText("")
         self.label_color_atlas_image.setText("")

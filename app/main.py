@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import numpy as np
 import re
 from PySide6.QtWidgets import (QApplication, QFileDialog, QMessageBox, QMainWindow)
 from PySide6.QtGui import QPixmap, QImage
@@ -21,7 +20,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.directory = None
 
         self.translator = QTranslator()
-        self._load_translator()
+        self.load_translator()
 
         self.button_file_browse.clicked.connect(self.select_file)
         self.button_generate.clicked.connect(self.start_processing)
@@ -31,19 +30,21 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.radio_button_language_english.toggled.connect(lambda: self.change_language('en'))
         self.radio_button_language_japanese.toggled.connect(lambda: self.change_language('ja'))
 
-        self.button_update_frames.clicked.connect(self._update_frame_count)
+        self.button_update_frames.clicked.connect(self.update_frame_count)
 
-        self.number_atlas_width.valueChanged.connect(self._update_preferred_frame_count)
-        self.number_atlas_height.valueChanged.connect(self._update_preferred_frame_count)
-        self.number_frame_skip.valueChanged.connect(self._update_preferred_frame_count)
-        self.checkbox_loop.toggled.connect(self._update_preferred_frame_count)
+        self.number_atlas_width.valueChanged.connect(self._update_optimal_frame_count)
+        self.number_atlas_height.valueChanged.connect(self._update_optimal_frame_count)
+        self.number_frame_skip.valueChanged.connect(self._update_optimal_frame_count)
+        self.checkbox_loop.toggled.connect(self._update_optimal_frame_count)
 
-    def _get_path_qm(self, lang):
+        self._update_optimal_frame_count()
+
+    def get_path_qm(self, lang):
         return (Path(__file__).parent / f"./translation/motionframe_{lang}.qm").absolute().as_posix()
 
-    def _load_translator(self):
+    def load_translator(self):
         if self.language == 'ja':
-            self.translator.load(self._get_path_qm(self.language))
+            self.translator.load(self.get_path_qm(self.language))
             app.installTranslator(self.translator)
 
     def change_language(self, language):
@@ -52,29 +53,29 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
             if language == 'en':
                 app.removeTranslator(self.translator)
             else:
-                self.translator.load(self._get_path_qm(self.language))
+                self.translator.load(self.get_path_qm(self.language))
                 app.installTranslator(self.translator)
             self.retranslateUi(self)
 
-    def _set_input_frame(self, frame_path):
+    def set_input_frame(self, frame_path):
         if not frame_path:
             return
 
         self.directory = os.path.dirname(frame_path)
         self.text_directory.setText(self.directory)
-        prefix, ext, zeros = self._detect_image_sequence_pattern(os.path.basename(frame_path))
+        prefix, ext, zeros = self.detect_image_sequence_pattern(os.path.basename(frame_path))
         self.text_file_prefix.setText(prefix)
         self.text_extension.setText(ext)
         self.number_sequence_digits.setValue(zeros)
 
-        self._update_frame_count()
+        self.update_frame_count()
 
     def select_file(self):
         frame_path = QFileDialog.getOpenFileName(self, self.tr('Select Frame'), '',
                                                  'Images (*.jpg *.jpeg *.png *.bmp *.tiff *.tga)')[0]
-        self._set_input_frame(frame_path)
+        self.set_input_frame(frame_path)
 
-    def _load_frame_paths(self):
+    def load_frame_paths(self):
         prefix = self.text_file_prefix.text()
         extension = self.text_extension.text()
         num_digits = self.number_sequence_digits.value()
@@ -93,7 +94,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         return file_paths
 
-    def _preferred_frame_count(self):
+    def get_optimal_frame_count(self):
         atlas_size = self.number_atlas_width.value() * self.number_atlas_height.value()
         frame_skip = self.number_frame_skip.value()
 
@@ -105,14 +106,14 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         return used_frames
 
-    def _update_frame_count(self):
-        self.label_input_number_of_frames_value.setText(str(len(self._load_frame_paths())))
-        self._update_preferred_frame_count()
+    def update_frame_count(self):
+        self.label_input_number_of_frames_value.setText(str(len(self.load_frame_paths())))
+        self._update_optimal_frame_count()
 
-    def _update_preferred_frame_count(self):
-        self.label_preferred_input_number_of_frames_value.setText(str(self._preferred_frame_count()))
+    def _update_optimal_frame_count(self):
+        self.label_optimal_input_number_of_frames_value.setText(str(self.get_optimal_frame_count()))
 
-    def _detect_image_sequence_pattern(self, file_path):
+    def detect_image_sequence_pattern(self, file_path):
         pattern = re.compile(r'(.*?)(\d+)\.(\w+)$')
 
         match = pattern.match(file_path)
@@ -126,7 +127,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         clipboard = QApplication.clipboard()
         clipboard.setText(self.text_motion_strength.text())
 
-    def _check_atlas_fit(self, atlas_width, atlas_height, frame_skip, total_frame_count):
+    def check_atlas_fit(self, atlas_width, atlas_height, frame_skip, total_frame_count):
         expected_frames = atlas_width * atlas_height
         actual_frames = lib.calculate_required_frames(total_frame_count, frame_skip)
 
@@ -158,26 +159,30 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         atlas_width = self.number_atlas_width.value()
         atlas_height = self.number_atlas_height.value()
         frame_skip = self.number_frame_skip.value()
-        motion_scale = self.number_scale.value()
         is_loop = self.checkbox_loop.isChecked()
         analyze_skipped_frames = self.checkbox_analyze_skipped_frames.isChecked()
+        halve_motion = self.checkbox_downsample_motion_vector.isChecked()
 
-        frame_paths = self._load_frame_paths()
+        frame_paths = self.load_frame_paths()
 
-        can_fit, error_message = self._check_atlas_fit(atlas_width, atlas_height, frame_skip, len(frame_paths))
+        can_fit, error_message = self.check_atlas_fit(atlas_width, atlas_height, frame_skip, len(frame_paths))
         if not can_fit:
             QMessageBox.critical(self, self.tr('Error'), error_message)
             return
 
         frames = lib.load_frames(frame_paths)
 
-        if not frames:
+        if not frames or len(frames) == 0:
             QMessageBox.critical(self, self.tr('Error'), self.tr('No frames loaded. Check the file pattern and paths.'))
+            return
+
+        if len(frames) != len(frame_paths):
+            QMessageBox.warning(self, self.tr('Error'), self.tr('Some frames could not be loaded.'))
             return
 
         motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())
 
-        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_scale, motion_vector_encoding, is_loop, analyze_skipped_frames)
+        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion)
 
         self.display_image(self.result.color_atlas, self.label_color_atlas_image)
         self.display_image(self.result.motion_atlas, self.label_motion_vector_image)
@@ -188,23 +193,9 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         self.label_discarded_trailing_frames_value.setText(str(discarded_frames))
         self.label_total_frames_value.setText(str(self.result.total_frames))
 
-    def bgr_to_rgb(self, image):
-        channels = lib.channel_count(image)
-
-        if channels < 3:
-            return image
-
-        image_copy = np.zeros_like(image)
-        # BGR to RGB conversion
-        if channels == 3:
-            image_copy[..., [0, 1, 2]] = image[..., [2, 1, 0]]
-        elif channels == 4:
-            image_copy[..., [0, 1, 2, 3]] = image[..., [2, 1, 0, 3]]
-        return image_copy
-
     def display_image(self, image, label):
         channels = lib.channel_count(image)
-        image = self.bgr_to_rgb(image)
+        image = lib.bgr_to_rgb(image)
 
         height, width = image.shape[0], image.shape[1]
         bytes_per_line = channels * width
@@ -227,8 +218,8 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         color_atlas_path = save_path + "_color_atlas.tga"
         motion_atlas_path = save_path + "_motion_atlas.tga"
 
-        color_atlas = self.bgr_to_rgb(self.result.color_atlas)
-        motion_atlas = self.bgr_to_rgb(self.result.motion_atlas)
+        color_atlas = lib.bgr_to_rgb(self.result.color_atlas)
+        motion_atlas = lib.bgr_to_rgb(self.result.motion_atlas)
 
         Image.fromarray(color_atlas).save(color_atlas_path)
         Image.fromarray(motion_atlas).save(motion_atlas_path)
@@ -244,15 +235,17 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
     def dropEvent(self, event):
         for url in event.mimeData().urls():
             path = url.toLocalFile()
+
             if os.path.isdir(path):
                 files = os.listdir(path)
                 for file in files:
                     if re.search(r'\.(jpg|jpeg|png|bmp|tiff|tga)$', file, re.IGNORECASE):
-                        self._set_input_frame(os.path.join(path, file))
+                        self.set_input_frame(os.path.join(path, file))
                         event.acceptProposedAction()
                         break
+
             if os.path.isfile(path):
-                self._set_input_frame(path)
+                self.set_input_frame(path)
                 event.acceptProposedAction()
                 break
 
