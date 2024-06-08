@@ -163,6 +163,10 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         analyze_skipped_frames = self.checkbox_analyze_skipped_frames.isChecked()
         halve_motion = self.checkbox_downsample_motion_vector.isChecked()
 
+        atlas_pixel_width = self.combo_atlas_resolution_width.currentIndex()
+        # Convert the width to pixels, starts at 0 index with 32
+        atlas_pixel_width = 32 * (2 ** atlas_pixel_width)
+
         frame_paths = self.load_frame_paths()
 
         can_fit, error_message = self.check_atlas_fit(atlas_width, atlas_height, frame_skip, len(frame_paths))
@@ -182,7 +186,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())
 
-        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion)
+        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion)
 
         self.display_image(self.result.color_atlas, self.label_color_atlas_image)
         self.display_image(self.result.motion_atlas, self.label_motion_vector_image)

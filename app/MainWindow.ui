@@ -303,7 +303,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="comboBox">
+          <widget class="QComboBox" name="combo_atlas_resolution_width">
            <property name="currentText">
             <string notr="true">2048</string>
            </property>
@@ -823,8 +823,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
-               <height>40</height>
+               <width>1004</width>
+               <height>380</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
@@ -862,8 +862,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
-               <height>40</height>
+               <width>1004</width>
+               <height>380</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
@@ -968,7 +968,7 @@
   <tabstop>text_file_prefix</tabstop>
   <tabstop>text_extension</tabstop>
   <tabstop>number_sequence_digits</tabstop>
-  <tabstop>comboBox</tabstop>
+  <tabstop>combo_atlas_resolution_width</tabstop>
   <tabstop>number_atlas_width</tabstop>
   <tabstop>number_atlas_height</tabstop>
   <tabstop>number_frame_skip</tabstop>
