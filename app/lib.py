@@ -37,14 +37,72 @@ def decode_atlas(atlas, atlas_width, atlas_height):
 
     return frames
 
+def _resize(atlas, new_width, interpolation_method):
+    if atlas.shape[1] < new_width:
+        atlas = cv2.resize(atlas, (new_width, atlas.shape[0] * new_width // atlas.shape[1]), interpolation=interpolation_method)
+    else:
+        while atlas.shape[1] > new_width:
+            if atlas.shape[1] // 2 < new_width:
+                atlas = cv2.resize(atlas, (new_width, atlas.shape[0] * new_width // atlas.shape[1]), interpolation=interpolation_method)
+            else:
+                atlas = cv2.resize(atlas, (atlas.shape[1] // 2, atlas.shape[0] // 2), interpolation=interpolation_method)
+
+    return atlas
+
+def motion_atlas_stagger_pack(atlas, tiles_x, tiles_y):
+    # Calculate the number of tiles in the atlas
+    atlas_height, atlas_width, _ = atlas.shape
+    tile_width = atlas_width // tiles_x
+    tile_height = atlas_height // tiles_y
+    num_tiles = tiles_x * tiles_y
+
+    # Split the atlas into individual tile images
+    tiles = [atlas[i*tile_height:(i+1)*tile_height, j*tile_width:(j+1)*tile_width] for i in range(tiles_y) for j in range(tiles_x)]
+
+    # Calculate the required atlas height.
+    new_atlas_height = math.ceil(math.ceil(num_tiles / 2) / tiles_x) * tile_height
+
+    # Create a new 4 channel image with half the height of the atlas
+    new_image = np.zeros((new_atlas_height, atlas_width, 4), dtype=np.uint8)
+
+    # Assign the even-indexed tiles to the R and G channels, and the odd-indexed tiles to the B and A channels
+    for i in range(num_tiles):
+        tile_i = i // 2
+        tile_y = (tile_i // tiles_x) * tile_height
+        tile_x = (tile_i % tiles_x) * tile_width
+        if i % 2 == 0:
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 2] = tiles[i][:, :, 0] # R
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 1] = tiles[i][:, :, 1] # G
+        else:
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 0] = tiles[i][:, :, 0] # B
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 3] = tiles[i][:, :, 1] # A
+
+    return new_image
+
+def motion_atlas_flat_pack(image):
+    # Split the image into top and bottom halves
+    height = image.shape[0]
+    width = image.shape[1]
+
+    # Create a new 3 channel image
+    new_image = np.zeros((height, width, 3), dtype=np.uint8)
+    new_image[:, :, 0] = 0 # B
+    new_image[:, :, 1] = image[:, :, 1] # G
+    new_image[:, :, 2] = image[:, :, 0]  # R
+
+    return new_image
+
 def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector):
     color_atlas, total_frames = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
-    color_atlas = cv2.resize(color_atlas, (atlas_pixel_width, color_atlas.shape[0] * atlas_pixel_width // color_atlas.shape[1]), interpolation=cv2.INTER_LINEAR)
+
+    color_atlas = _resize(color_atlas, atlas_pixel_width, cv2.INTER_CUBIC)
 
     motion_vector_width = atlas_pixel_width
     if halve_motion_vector:
         motion_vector_width //= 2
     motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width)
+
+    motion_atlas = motion_atlas_stagger_pack(motion_atlas, atlas_width, atlas_height)
 
     return EncodeResult(color_atlas, motion_atlas, flow_directions, max_strength, total_frames)
 
@@ -252,12 +310,12 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
     for atlas_idx, flow in enumerate(flow_frames):
         _blit_image(flow, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
 
-    motion_atlas = cv2.resize(motion_atlas, (motion_vector_width, motion_atlas.shape[0] * motion_vector_width // motion_atlas.shape[1]), interpolation=cv2.INTER_LINEAR)
+    motion_atlas = _resize(motion_atlas, motion_vector_width, cv2.INTER_CUBIC)
 
     # Encode motion to a texture
     r, g = _encode_motion_vector(motion_vector_encoding, motion_atlas, max_strength)
-    motion_atlas = np.zeros([motion_atlas.shape[0], motion_atlas.shape[1], 3], dtype=np.uint8)
-    motion_atlas[..., 2] = np.clip(r, 0, 255).astype(np.uint8)
+    motion_atlas = np.zeros([motion_atlas.shape[0], motion_atlas.shape[1], 2], dtype=np.uint8)
+    motion_atlas[..., 0] = np.clip(r, 0, 255).astype(np.uint8)
     motion_atlas[..., 1] = np.clip(g, 0, 255).astype(np.uint8)
 
     return motion_atlas, flow_directions, max_strength
