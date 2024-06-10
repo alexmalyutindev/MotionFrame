@@ -2,6 +2,7 @@
 
 import os
 import re
+import cv2
 from PySide6.QtWidgets import (QApplication, QFileDialog, QMessageBox, QMainWindow)
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt, QTranslator
@@ -167,6 +168,15 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         # Convert the width to pixels, starts at 0 index with 32
         atlas_pixel_width = 32 * (2 ** atlas_pixel_width)
 
+        enable_stagger_pack = self.checkbox_stagger_pack.isChecked()
+        resize_alogrithm = self.combo_resize_algorithm.currentIndex()
+        if resize_alogrithm == 0:
+            resize_alogrithm = cv2.INTER_CUBIC
+        elif resize_alogrithm == 1:
+            resize_alogrithm = cv2.INTER_LINEAR
+        else:
+            resize_alogrithm = cv2.INTER_CUBIC
+
         frame_paths = self.load_frame_paths()
 
         can_fit, error_message = self.check_atlas_fit(atlas_width, atlas_height, frame_skip, len(frame_paths))
@@ -186,7 +196,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())
 
-        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion)
+        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion, resize_alogrithm, enable_stagger_pack)
 
         self.display_image(self.result.color_atlas, self.label_color_atlas_image)
         self.display_image(self.result.motion_atlas, self.label_motion_vector_image)
@@ -225,8 +235,8 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         color_atlas = lib.bgr_to_rgb(self.result.color_atlas)
         motion_atlas = lib.bgr_to_rgb(self.result.motion_atlas)
 
-        Image.fromarray(color_atlas).save(color_atlas_path)
-        Image.fromarray(motion_atlas).save(motion_atlas_path)
+        Image.fromarray(color_atlas).save(color_atlas_path, compression='tga_rle')
+        Image.fromarray(motion_atlas).save(motion_atlas_path, compression='tga_rle')
 
         QMessageBox.information(self, self.tr('Save'), self.tr('The results have been saved successfully.'))
 

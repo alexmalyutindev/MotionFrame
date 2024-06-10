@@ -228,6 +228,20 @@ class Ui_MotionFrame(object):
 
         self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.number_atlas_height)
 
+        self.label_stagger_pack = QLabel(self.groupbox_atlas)
+        self.label_stagger_pack.setObjectName(u"label_stagger_pack")
+        self.label_stagger_pack.setMinimumSize(QSize(200, 0))
+        self.label_stagger_pack.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_stagger_pack)
+
+        self.checkbox_stagger_pack = QCheckBox(self.groupbox_atlas)
+        self.checkbox_stagger_pack.setObjectName(u"checkbox_stagger_pack")
+        self.checkbox_stagger_pack.setEnabled(True)
+        self.checkbox_stagger_pack.setText(u"")
+
+        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.checkbox_stagger_pack)
+
 
         self.layout_left.addWidget(self.groupbox_atlas)
 
@@ -329,6 +343,20 @@ class Ui_MotionFrame(object):
 
         self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
 
+        self.label_resize_algorithm = QLabel(self.groupbox_export)
+        self.label_resize_algorithm.setObjectName(u"label_resize_algorithm")
+        self.label_resize_algorithm.setMinimumSize(QSize(200, 0))
+        self.label_resize_algorithm.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.formLayout_4.setWidget(2, QFormLayout.LabelRole, self.label_resize_algorithm)
+
+        self.combo_resize_algorithm = QComboBox(self.groupbox_export)
+        self.combo_resize_algorithm.addItem(u"Cubic")
+        self.combo_resize_algorithm.addItem(u"Bilinear")
+        self.combo_resize_algorithm.setObjectName(u"combo_resize_algorithm")
+
+        self.formLayout_4.setWidget(2, QFormLayout.FieldRole, self.combo_resize_algorithm)
+
 
         self.layout_left.addWidget(self.groupbox_export)
 
@@ -337,10 +365,16 @@ class Ui_MotionFrame(object):
 
         self.layout_left.addWidget(self.button_generate)
 
-        self.form_input_frames = QFormLayout()
+        self.verticalSpacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
+        self.layout_left.addItem(self.verticalSpacer)
+
+        self.groupBox = QGroupBox(self.central)
+        self.groupBox.setObjectName(u"groupBox")
+        self.form_input_frames = QFormLayout(self.groupBox)
         self.form_input_frames.setObjectName(u"form_input_frames")
         self.form_input_frames.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
-        self.label_input_number_of_frames = QLabel(self.central)
+        self.label_input_number_of_frames = QLabel(self.groupBox)
         self.label_input_number_of_frames.setObjectName(u"label_input_number_of_frames")
         sizePolicy.setHeightForWidth(self.label_input_number_of_frames.sizePolicy().hasHeightForWidth())
         self.label_input_number_of_frames.setSizePolicy(sizePolicy)
@@ -349,13 +383,13 @@ class Ui_MotionFrame(object):
 
         self.form_input_frames.setWidget(0, QFormLayout.LabelRole, self.label_input_number_of_frames)
 
-        self.label_input_number_of_frames_value = QLabel(self.central)
+        self.label_input_number_of_frames_value = QLabel(self.groupBox)
         self.label_input_number_of_frames_value.setObjectName(u"label_input_number_of_frames_value")
         self.label_input_number_of_frames_value.setText(u"0")
 
         self.form_input_frames.setWidget(0, QFormLayout.FieldRole, self.label_input_number_of_frames_value)
 
-        self.label_optimal_input_number_of_frames = QLabel(self.central)
+        self.label_optimal_input_number_of_frames = QLabel(self.groupBox)
         self.label_optimal_input_number_of_frames.setObjectName(u"label_optimal_input_number_of_frames")
         sizePolicy.setHeightForWidth(self.label_optimal_input_number_of_frames.sizePolicy().hasHeightForWidth())
         self.label_optimal_input_number_of_frames.setSizePolicy(sizePolicy)
@@ -364,14 +398,14 @@ class Ui_MotionFrame(object):
 
         self.form_input_frames.setWidget(1, QFormLayout.LabelRole, self.label_optimal_input_number_of_frames)
 
-        self.label_optimal_input_number_of_frames_value = QLabel(self.central)
+        self.label_optimal_input_number_of_frames_value = QLabel(self.groupBox)
         self.label_optimal_input_number_of_frames_value.setObjectName(u"label_optimal_input_number_of_frames_value")
         self.label_optimal_input_number_of_frames_value.setText(u"0")
 
         self.form_input_frames.setWidget(1, QFormLayout.FieldRole, self.label_optimal_input_number_of_frames_value)
 
 
-        self.layout_left.addLayout(self.form_input_frames)
+        self.layout_left.addWidget(self.groupBox)
 
         self.button_update_frames = QPushButton(self.central)
         self.button_update_frames.setObjectName(u"button_update_frames")
@@ -580,6 +614,7 @@ class Ui_MotionFrame(object):
 
         self.label_atlas_width.setText(QCoreApplication.translate("MotionFrame", u"Columns (X):", None))
         self.label_atlas_height.setText(QCoreApplication.translate("MotionFrame", u"Rows (Y):", None))
+        self.label_stagger_pack.setText(QCoreApplication.translate("MotionFrame", u"Stagger Pack:", None))
         self.groupbox_animation.setTitle(QCoreApplication.translate("MotionFrame", u"Animation", None))
         self.label_frame_skip.setText(QCoreApplication.translate("MotionFrame", u"Frame Skip:", None))
         self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
@@ -588,9 +623,12 @@ class Ui_MotionFrame(object):
         self.label_downsample_motion_vector.setText(QCoreApplication.translate("MotionFrame", u"Downsample Motion Vector:", None))
         self.label_motion_vector_encoding.setText(QCoreApplication.translate("MotionFrame", u"Motion Vector Encoding:", None))
 
+        self.label_resize_algorithm.setText(QCoreApplication.translate("MotionFrame", u"Resize Algorithm:", None))
+
         self.button_generate.setText(QCoreApplication.translate("MotionFrame", u"Generate", None))
-        self.label_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Input Number of Frames:", None))
-        self.label_optimal_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Optimal Input Number of Frames:", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MotionFrame", u"Input Frames", None))
+        self.label_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Current Frames:", None))
+        self.label_optimal_input_number_of_frames.setText(QCoreApplication.translate("MotionFrame", u"Optimal Frames:", None))
         self.button_update_frames.setText(QCoreApplication.translate("MotionFrame", u"Recount Input Frames", None))
         self.label_motion_vector.setText("")
         self.label_color_atlas_image.setText("")

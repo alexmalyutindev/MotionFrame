@@ -92,17 +92,20 @@ def motion_atlas_flat_pack(image):
 
     return new_image
 
-def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector):
+def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector, resize_algorithm, enable_stagger_pack):
     color_atlas, total_frames = _create_color_atlas(frames, atlas_width, atlas_height, frame_skip)
 
-    color_atlas = _resize(color_atlas, atlas_pixel_width, cv2.INTER_CUBIC)
+    color_atlas = _resize(color_atlas, atlas_pixel_width, resize_algorithm)
 
     motion_vector_width = atlas_pixel_width
     if halve_motion_vector:
         motion_vector_width //= 2
-    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width)
+    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm)
 
-    motion_atlas = motion_atlas_stagger_pack(motion_atlas, atlas_width, atlas_height)
+    if enable_stagger_pack:
+        motion_atlas = motion_atlas_stagger_pack(motion_atlas, atlas_width, atlas_height)
+    else:
+        motion_atlas = motion_atlas_flat_pack(motion_atlas)
 
     return EncodeResult(color_atlas, motion_atlas, flow_directions, max_strength, total_frames)
 
@@ -211,7 +214,7 @@ def _encode_motion_vector(method, flow, max_strength):
 
     return r, g
 
-def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width):
+def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm):
     height, width = frames[0].shape[:2]
     motion_atlas = np.zeros([atlas_height * height, atlas_width * width, 2], dtype=np.float32)
 
@@ -310,7 +313,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_skip, motion_v
     for atlas_idx, flow in enumerate(flow_frames):
         _blit_image(flow, motion_atlas, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
 
-    motion_atlas = _resize(motion_atlas, motion_vector_width, cv2.INTER_CUBIC)
+    motion_atlas = _resize(motion_atlas, motion_vector_width, resize_algorithm)
 
     # Encode motion to a texture
     r, g = _encode_motion_vector(motion_vector_encoding, motion_atlas, max_strength)
