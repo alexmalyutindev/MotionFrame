@@ -15,35 +15,46 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
-    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QLineEdit, QMainWindow, QPushButton, QRadioButton,
-    QScrollArea, QSizePolicy, QSpacerItem, QSpinBox,
-    QTabWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QComboBox,
+    QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
+    QLabel, QLineEdit, QMainWindow, QPushButton,
+    QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
+    QSpinBox, QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_MotionFrame(object):
     def setupUi(self, MotionFrame):
         if not MotionFrame.objectName():
             MotionFrame.setObjectName(u"MotionFrame")
-        MotionFrame.resize(1584, 991)
+        MotionFrame.resize(889, 747)
         self.central = QWidget(MotionFrame)
         self.central.setObjectName(u"central")
         self.horizontalLayout = QHBoxLayout(self.central)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.layout_left = QVBoxLayout()
-        self.layout_left.setObjectName(u"layout_left")
+        self.scrollArea = QScrollArea(self.central)
+        self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setMinimumSize(QSize(0, 0))
+        self.scrollArea.setLineWidth(-1)
+        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scrollArea.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_2 = QWidget()
+        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 483, 885))
+        self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.form_config = QFormLayout()
         self.form_config.setObjectName(u"form_config")
         self.form_config.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self.form_config.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
-        self.label_language = QLabel(self.central)
+        self.label_language = QLabel(self.scrollAreaWidgetContents_2)
         self.label_language.setObjectName(u"label_language")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_language.sizePolicy().hasHeightForWidth())
         self.label_language.setSizePolicy(sizePolicy)
-        self.label_language.setMinimumSize(QSize(200, 0))
+        self.label_language.setMinimumSize(QSize(215, 0))
         self.label_language.setTextFormat(Qt.PlainText)
         self.label_language.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
@@ -51,14 +62,14 @@ class Ui_MotionFrame(object):
 
         self.layout_language = QHBoxLayout()
         self.layout_language.setObjectName(u"layout_language")
-        self.radio_button_language_english = QRadioButton(self.central)
+        self.radio_button_language_english = QRadioButton(self.scrollAreaWidgetContents_2)
         self.radio_button_language_english.setObjectName(u"radio_button_language_english")
         self.radio_button_language_english.setText(u"English")
         self.radio_button_language_english.setChecked(True)
 
         self.layout_language.addWidget(self.radio_button_language_english)
 
-        self.radio_button_language_japanese = QRadioButton(self.central)
+        self.radio_button_language_japanese = QRadioButton(self.scrollAreaWidgetContents_2)
         self.radio_button_language_japanese.setObjectName(u"radio_button_language_japanese")
         self.radio_button_language_japanese.setText(u"\u65e5\u672c\u8a9e")
 
@@ -68,9 +79,9 @@ class Ui_MotionFrame(object):
         self.form_config.setLayout(0, QFormLayout.FieldRole, self.layout_language)
 
 
-        self.layout_left.addLayout(self.form_config)
+        self.verticalLayout.addLayout(self.form_config)
 
-        self.groupbox_file_input = QGroupBox(self.central)
+        self.groupbox_file_input = QGroupBox(self.scrollAreaWidgetContents_2)
         self.groupbox_file_input.setObjectName(u"groupbox_file_input")
         self.formLayout = QFormLayout(self.groupbox_file_input)
         self.formLayout.setObjectName(u"formLayout")
@@ -160,9 +171,9 @@ class Ui_MotionFrame(object):
         self.formLayout.setWidget(4, QFormLayout.FieldRole, self.number_sequence_digits)
 
 
-        self.layout_left.addWidget(self.groupbox_file_input)
+        self.verticalLayout.addWidget(self.groupbox_file_input)
 
-        self.groupbox_atlas = QGroupBox(self.central)
+        self.groupbox_atlas = QGroupBox(self.scrollAreaWidgetContents_2)
         self.groupbox_atlas.setObjectName(u"groupbox_atlas")
         self.formLayout_2 = QFormLayout(self.groupbox_atlas)
         self.formLayout_2.setObjectName(u"formLayout_2")
@@ -243,9 +254,9 @@ class Ui_MotionFrame(object):
         self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.checkbox_stagger_pack)
 
 
-        self.layout_left.addWidget(self.groupbox_atlas)
+        self.verticalLayout.addWidget(self.groupbox_atlas)
 
-        self.groupbox_animation = QGroupBox(self.central)
+        self.groupbox_animation = QGroupBox(self.scrollAreaWidgetContents_2)
         self.groupbox_animation.setObjectName(u"groupbox_animation")
         self.formLayout_3 = QFormLayout(self.groupbox_animation)
         self.formLayout_3.setObjectName(u"formLayout_3")
@@ -301,9 +312,9 @@ class Ui_MotionFrame(object):
         self.formLayout_3.setWidget(2, QFormLayout.FieldRole, self.checkbox_loop)
 
 
-        self.layout_left.addWidget(self.groupbox_animation)
+        self.verticalLayout.addWidget(self.groupbox_animation)
 
-        self.groupbox_export = QGroupBox(self.central)
+        self.groupbox_export = QGroupBox(self.scrollAreaWidgetContents_2)
         self.groupbox_export.setObjectName(u"groupbox_export")
         self.formLayout_4 = QFormLayout(self.groupbox_export)
         self.formLayout_4.setObjectName(u"formLayout_4")
@@ -338,7 +349,6 @@ class Ui_MotionFrame(object):
         self.combo_motion_vector_encoding = QComboBox(self.groupbox_export)
         self.combo_motion_vector_encoding.addItem(u"R8G8 Remapped to 0-1")
         self.combo_motion_vector_encoding.addItem(u"SideFX Labs R8G8 Encoding")
-        self.combo_motion_vector_encoding.addItem(u"R16G16")
         self.combo_motion_vector_encoding.setObjectName(u"combo_motion_vector_encoding")
 
         self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.combo_motion_vector_encoding)
@@ -358,18 +368,18 @@ class Ui_MotionFrame(object):
         self.formLayout_4.setWidget(2, QFormLayout.FieldRole, self.combo_resize_algorithm)
 
 
-        self.layout_left.addWidget(self.groupbox_export)
+        self.verticalLayout.addWidget(self.groupbox_export)
 
-        self.button_generate = QPushButton(self.central)
+        self.button_generate = QPushButton(self.scrollAreaWidgetContents_2)
         self.button_generate.setObjectName(u"button_generate")
 
-        self.layout_left.addWidget(self.button_generate)
+        self.verticalLayout.addWidget(self.button_generate)
 
-        self.verticalSpacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.verticalSpacer = QSpacerItem(20, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
-        self.layout_left.addItem(self.verticalSpacer)
+        self.verticalLayout.addItem(self.verticalSpacer)
 
-        self.groupBox = QGroupBox(self.central)
+        self.groupBox = QGroupBox(self.scrollAreaWidgetContents_2)
         self.groupBox.setObjectName(u"groupBox")
         self.form_input_frames = QFormLayout(self.groupBox)
         self.form_input_frames.setObjectName(u"form_input_frames")
@@ -405,24 +415,25 @@ class Ui_MotionFrame(object):
         self.form_input_frames.setWidget(1, QFormLayout.FieldRole, self.label_optimal_input_number_of_frames_value)
 
 
-        self.layout_left.addWidget(self.groupBox)
+        self.verticalLayout.addWidget(self.groupBox)
 
-        self.button_update_frames = QPushButton(self.central)
+        self.button_update_frames = QPushButton(self.scrollAreaWidgetContents_2)
         self.button_update_frames.setObjectName(u"button_update_frames")
 
-        self.layout_left.addWidget(self.button_update_frames)
+        self.verticalLayout.addWidget(self.button_update_frames)
 
-        self.label_motion_vector = QLabel(self.central)
+        self.label_motion_vector = QLabel(self.scrollAreaWidgetContents_2)
         self.label_motion_vector.setObjectName(u"label_motion_vector")
 
-        self.layout_left.addWidget(self.label_motion_vector)
+        self.verticalLayout.addWidget(self.label_motion_vector)
 
         self.left_spacer = QSpacerItem(378, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.layout_left.addItem(self.left_spacer)
+        self.verticalLayout.addItem(self.left_spacer)
 
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
 
-        self.horizontalLayout.addLayout(self.layout_left)
+        self.horizontalLayout.addWidget(self.scrollArea)
 
         self.layout_right = QVBoxLayout()
         self.layout_right.setObjectName(u"layout_right")
@@ -442,7 +453,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 1004, 380))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 294, 257))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -466,7 +477,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 1004, 380))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 294, 257))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -490,7 +501,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 1004, 380))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 294, 257))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
