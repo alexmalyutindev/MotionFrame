@@ -179,7 +179,9 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         frame_paths = self.load_frame_paths()
 
-        can_fit, error_message = self.check_atlas_fit(atlas_width, atlas_height, frame_skip, len(frame_paths))
+        frame_count = len(frame_paths)
+
+        can_fit, error_message = self.check_atlas_fit(atlas_width, atlas_height, frame_skip, frame_count)
         if not can_fit:
             QMessageBox.critical(self, self.tr('Error'), error_message)
             return
@@ -190,7 +192,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
             QMessageBox.critical(self, self.tr('Error'), self.tr('No frames loaded. Check the file pattern and paths.'))
             return
 
-        if len(frames) != len(frame_paths):
+        if len(frames) != frame_count:
             QMessageBox.warning(self, self.tr('Error'), self.tr('Some frames could not be loaded.'))
             return
 
