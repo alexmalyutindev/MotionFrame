@@ -240,6 +240,25 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         Image.fromarray(color_atlas).save(color_atlas_path, compression='tga_rle')
         Image.fromarray(motion_atlas).save(motion_atlas_path, compression='tga_rle')
 
+        # Save the meta info to a text file in JSON
+        motion_strength_path = save_path + "_meta.json"
+        with open(motion_strength_path, 'w') as f:
+            f.write(f'{{\n')
+            # Motion strength for shader
+            f.write(f'  "strength": {self.result.strength:.8f},\n')
+            f.write(f'  "total_frames": {self.result.total_frames}\n')
+            # Dimensions
+            f.write(f'  "atlas_width": {self.number_atlas_width.value()},\n')
+            f.write(f'  "atlas_height": {self.number_atlas_height.value()},\n')
+            # Pack mode
+            if self.checkbox_stagger_pack.isChecked():
+                f.write(f'  "pack_mode": "staggered",\n')
+            else:
+                f.write(f'  "pack_mode": "normal",\n')
+            # Loop?
+            f.write(f'  "loop": {str(self.checkbox_loop.isChecked()).lower()}\n')
+            f.write(f'}}\n')
+
         QMessageBox.information(self, self.tr('Save'), self.tr('The results have been saved successfully.'))
 
     def dragEnterEvent(self, event):
