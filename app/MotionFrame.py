@@ -33,12 +33,18 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         self.button_update_frames.clicked.connect(self.update_frame_count)
 
-        self.number_atlas_width.valueChanged.connect(self._update_optimal_frame_count)
-        self.number_atlas_height.valueChanged.connect(self._update_optimal_frame_count)
+        self.number_atlas_width.currentIndexChanged.connect(self._update_optimal_frame_count)
+        self.number_atlas_height.currentIndexChanged.connect(self._update_optimal_frame_count)
         self.number_frame_skip.valueChanged.connect(self._update_optimal_frame_count)
         self.checkbox_loop.toggled.connect(self._update_optimal_frame_count)
 
         self._update_optimal_frame_count()
+
+    def get_atlas_width(self):
+        return 1 << (self.number_atlas_width.currentIndex() + 1)
+
+    def get_atlas_height(self):
+        return 1 << (self.number_atlas_height.currentIndex() + 1)
 
     def get_path_qm(self, lang):
         return (Path(__file__).parent / f"./translation/motionframe_{lang}.qm").absolute().as_posix()
@@ -96,7 +102,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         return file_paths
 
     def get_optimal_frame_count(self):
-        atlas_size = self.number_atlas_width.value() * self.number_atlas_height.value()
+        atlas_size = self.get_atlas_width() * self.get_atlas_height()
         frame_skip = self.number_frame_skip.value()
 
         used_frames = atlas_size * (1 + frame_skip)
@@ -157,8 +163,8 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
             QMessageBox.critical(self, self.tr('Error'), self.tr('No frames loaded. Check the file pattern and paths.'))
             return
 
-        atlas_width = self.number_atlas_width.value()
-        atlas_height = self.number_atlas_height.value()
+        atlas_width = self.get_atlas_width()
+        atlas_height = self.get_atlas_height()
         frame_skip = self.number_frame_skip.value()
         is_loop = self.checkbox_loop.isChecked()
         analyze_skipped_frames = self.checkbox_analyze_skipped_frames.isChecked()
@@ -248,8 +254,8 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
             f.write(f'  "strength": {self.result.strength:.8f},\n')
             f.write(f'  "total_frames": {self.result.total_frames}\n')
             # Dimensions
-            f.write(f'  "atlas_width": {self.number_atlas_width.value()},\n')
-            f.write(f'  "atlas_height": {self.number_atlas_height.value()},\n')
+            f.write(f'  "atlas_width": {self.get_atlas_width()},\n')
+            f.write(f'  "atlas_height": {self.get_atlas_height()},\n')
             # Pack mode
             if self.checkbox_stagger_pack.isChecked():
                 f.write(f'  "pack_mode": "staggered",\n')

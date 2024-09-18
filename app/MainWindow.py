@@ -40,7 +40,7 @@ class Ui_MotionFrame(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 483, 885))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 499, 897))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.form_config = QFormLayout()
@@ -211,15 +211,7 @@ class Ui_MotionFrame(object):
         self.label_atlas_width.setTextFormat(Qt.PlainText)
         self.label_atlas_width.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_atlas_width)
-
-        self.number_atlas_width = QSpinBox(self.groupbox_atlas)
-        self.number_atlas_width.setObjectName(u"number_atlas_width")
-        self.number_atlas_width.setMinimum(1)
-        self.number_atlas_width.setMaximum(64)
-        self.number_atlas_width.setValue(8)
-
-        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.number_atlas_width)
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_atlas_width)
 
         self.label_atlas_height = QLabel(self.groupbox_atlas)
         self.label_atlas_height.setObjectName(u"label_atlas_height")
@@ -229,29 +221,47 @@ class Ui_MotionFrame(object):
         self.label_atlas_height.setTextFormat(Qt.PlainText)
         self.label_atlas_height.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_atlas_height)
-
-        self.number_atlas_height = QSpinBox(self.groupbox_atlas)
-        self.number_atlas_height.setObjectName(u"number_atlas_height")
-        self.number_atlas_height.setMinimum(1)
-        self.number_atlas_height.setMaximum(64)
-        self.number_atlas_height.setValue(8)
-
-        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.number_atlas_height)
+        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_atlas_height)
 
         self.label_stagger_pack = QLabel(self.groupbox_atlas)
         self.label_stagger_pack.setObjectName(u"label_stagger_pack")
         self.label_stagger_pack.setMinimumSize(QSize(200, 0))
         self.label_stagger_pack.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_stagger_pack)
+        self.formLayout_2.setWidget(5, QFormLayout.LabelRole, self.label_stagger_pack)
 
         self.checkbox_stagger_pack = QCheckBox(self.groupbox_atlas)
         self.checkbox_stagger_pack.setObjectName(u"checkbox_stagger_pack")
         self.checkbox_stagger_pack.setEnabled(True)
         self.checkbox_stagger_pack.setText(u"")
 
-        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.checkbox_stagger_pack)
+        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.checkbox_stagger_pack)
+
+        self.number_atlas_width = QComboBox(self.groupbox_atlas)
+        self.number_atlas_width.addItem(u"2")
+        self.number_atlas_width.addItem(u"4")
+        self.number_atlas_width.addItem(u"8")
+        self.number_atlas_width.addItem(u"16")
+        self.number_atlas_width.addItem(u"32")
+        self.number_atlas_width.addItem(u"64")
+        self.number_atlas_width.addItem(u"128")
+        self.number_atlas_width.addItem(u"256")
+        self.number_atlas_width.setObjectName(u"number_atlas_width")
+
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.number_atlas_width)
+
+        self.number_atlas_height = QComboBox(self.groupbox_atlas)
+        self.number_atlas_height.addItem(u"2")
+        self.number_atlas_height.addItem(u"4")
+        self.number_atlas_height.addItem(u"8")
+        self.number_atlas_height.addItem(u"16")
+        self.number_atlas_height.addItem(u"32")
+        self.number_atlas_height.addItem(u"64")
+        self.number_atlas_height.addItem(u"128")
+        self.number_atlas_height.addItem(u"256")
+        self.number_atlas_height.setObjectName(u"number_atlas_height")
+
+        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.number_atlas_height)
 
 
         self.verticalLayout.addWidget(self.groupbox_atlas)
@@ -453,7 +463,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 294, 257))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 278, 257))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -477,7 +487,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 294, 257))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 278, 257))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -501,7 +511,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 294, 257))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 278, 257))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
@@ -585,9 +595,7 @@ class Ui_MotionFrame(object):
         QWidget.setTabOrder(self.text_file_prefix, self.text_extension)
         QWidget.setTabOrder(self.text_extension, self.number_sequence_digits)
         QWidget.setTabOrder(self.number_sequence_digits, self.combo_atlas_resolution_width)
-        QWidget.setTabOrder(self.combo_atlas_resolution_width, self.number_atlas_width)
-        QWidget.setTabOrder(self.number_atlas_width, self.number_atlas_height)
-        QWidget.setTabOrder(self.number_atlas_height, self.number_frame_skip)
+        QWidget.setTabOrder(self.combo_atlas_resolution_width, self.number_frame_skip)
         QWidget.setTabOrder(self.number_frame_skip, self.checkbox_analyze_skipped_frames)
         QWidget.setTabOrder(self.checkbox_analyze_skipped_frames, self.checkbox_loop)
         QWidget.setTabOrder(self.checkbox_loop, self.checkbox_downsample_motion_vector)
@@ -605,6 +613,8 @@ class Ui_MotionFrame(object):
         self.retranslateUi(MotionFrame)
 
         self.combo_atlas_resolution_width.setCurrentIndex(6)
+        self.number_atlas_width.setCurrentIndex(2)
+        self.number_atlas_height.setCurrentIndex(2)
         self.tabs_result.setCurrentIndex(0)
 
 
@@ -626,6 +636,8 @@ class Ui_MotionFrame(object):
         self.label_atlas_width.setText(QCoreApplication.translate("MotionFrame", u"Columns (X):", None))
         self.label_atlas_height.setText(QCoreApplication.translate("MotionFrame", u"Rows (Y):", None))
         self.label_stagger_pack.setText(QCoreApplication.translate("MotionFrame", u"Stagger Pack:", None))
+
+
         self.groupbox_animation.setTitle(QCoreApplication.translate("MotionFrame", u"Animation", None))
         self.label_frame_skip.setText(QCoreApplication.translate("MotionFrame", u"Frame Skip:", None))
         self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
