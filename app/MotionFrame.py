@@ -11,6 +11,7 @@ from MainWindow import Ui_MotionFrame
 from pathlib import Path
 import lib
 
+
 class MotionFrameApp(QMainWindow, Ui_MotionFrame):
     def __init__(self):
         super(MotionFrameApp, self).__init__()
@@ -204,13 +205,15 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())
 
-        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion, resize_alogrithm, enable_stagger_pack)
+        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip,
+                                       motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion, resize_alogrithm, enable_stagger_pack)
 
         self.display_image(self.result.color_atlas, self.label_color_atlas_image)
         self.display_image(self.result.motion_atlas, self.label_motion_vector_image)
         self.display_image(self.result.flow_directions, self.label_visualization_image)
 
-        discarded_frames = len(frames) - ((lib.calculate_required_frames(len(frames), frame_skip) - 1) * (1 + frame_skip) - 1)
+        discarded_frames = len(frames) - ((lib.calculate_required_frames(len(frames),
+                                                                         frame_skip) - 1) * (1 + frame_skip) - 1)
         self.text_motion_strength.setText(f"{self.result.strength:.8f}")
         self.label_discarded_trailing_frames_value.setText(str(discarded_frames))
         self.label_total_frames_value.setText(str(self.result.total_frames))
@@ -290,9 +293,9 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
                 event.acceptProposedAction()
                 break
 
+
 if __name__ == '__main__':
     app = QApplication([])
     window = MotionFrameApp()
     window.show()
     app.exec()
-

@@ -5,10 +5,12 @@ import numpy as np
 import math
 import imageio.v3 as imageio
 
+
 class MotionVectorEncoding(Enum):
     R8G8_REMAP_0_1 = 0
     SIDEFX_LABS_R8G8 = 1
     R16G16 = 2
+
 
 class EncodeResult:
     def __init__(self, color_atlas, motion_atlas, flow_directions, strength, total_frames):
@@ -18,8 +20,10 @@ class EncodeResult:
         self.strength = strength
         self.total_frames = total_frames
 
+
 def calculate_required_frames(frames, frame_skip):
     return (frames // (frame_skip + 1)) + min(frames % (frame_skip + 1), 1)
+
 
 def decode_atlas(atlas, atlas_width, atlas_height):
     # Error check for divisibility
@@ -37,6 +41,7 @@ def decode_atlas(atlas, atlas_width, atlas_height):
 
     return frames
 
+
 def _resize_steps(height, width, new_width, callback):
     if width < new_width:
         callback(height * new_width // width, new_width)
@@ -53,6 +58,7 @@ def _resize_steps(height, width, new_width, callback):
                 width = half_width
             callback(height, width)
 
+
 def _resize(src, new_width, interpolation_method):
     def resize_callback(height, width):
         nonlocal src
@@ -61,6 +67,7 @@ def _resize(src, new_width, interpolation_method):
     _resize_steps(src.shape[0], src.shape[1], new_width, resize_callback)
 
     return src
+
 
 def _predict_resize_height(height, width, new_width):
     def resize_callback(res_height, res_width):
@@ -71,6 +78,7 @@ def _predict_resize_height(height, width, new_width):
 
     return height
 
+
 def motion_atlas_stagger_pack(atlas, tiles_x, tiles_y):
     # Calculate the number of tiles in the atlas
     atlas_height, atlas_width, _ = atlas.shape
@@ -79,7 +87,8 @@ def motion_atlas_stagger_pack(atlas, tiles_x, tiles_y):
     num_tiles = tiles_x * tiles_y
 
     # Split the atlas into individual tile images
-    tiles = [atlas[i*tile_height:(i+1)*tile_height, j*tile_width:(j+1)*tile_width] for i in range(tiles_y) for j in range(tiles_x)]
+    tiles = [atlas[i*tile_height:(i+1)*tile_height, j*tile_width:(j+1)*tile_width]
+             for i in range(tiles_y) for j in range(tiles_x)]
 
     # Calculate the required atlas height.
     new_atlas_height = math.ceil(math.ceil(num_tiles / 2) / tiles_x) * tile_height
@@ -93,13 +102,14 @@ def motion_atlas_stagger_pack(atlas, tiles_x, tiles_y):
         tile_y = (tile_i // tiles_x) * tile_height
         tile_x = (tile_i % tiles_x) * tile_width
         if i % 2 == 0:
-            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 2] = tiles[i][:, :, 0] # R
-            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 1] = tiles[i][:, :, 1] # G
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 2] = tiles[i][:, :, 0]  # R
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 1] = tiles[i][:, :, 1]  # G
         else:
-            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 0] = tiles[i][:, :, 0] # B
-            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 3] = tiles[i][:, :, 1] # A
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 0] = tiles[i][:, :, 0]  # B
+            new_image[tile_y:tile_y+tile_height, tile_x:tile_x+tile_width, 3] = tiles[i][:, :, 1]  # A
 
     return new_image
+
 
 def motion_atlas_flat_pack(image):
     # Split the image into top and bottom halves
@@ -108,11 +118,12 @@ def motion_atlas_flat_pack(image):
 
     # Create a new 3 channel image
     new_image = np.zeros((height, width, 3), dtype=np.uint8)
-    new_image[:, :, 0] = 0 # B
-    new_image[:, :, 1] = image[:, :, 1] # G
+    new_image[:, :, 0] = 0  # B
+    new_image[:, :, 1] = image[:, :, 1]  # G
     new_image[:, :, 2] = image[:, :, 0]  # R
 
     return new_image
+
 
 def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector, resize_algorithm, enable_stagger_pack):
     # Assert that the atlas pixel width is divisible by the atlas width
@@ -123,12 +134,14 @@ def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_ski
     # Make sure that the frame height matches the result of the resize operation
     frame_height = _predict_resize_height(frames[0].shape[0], frames[0].shape[1], frame_width)
 
-    color_atlas, total_frames = _create_color_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, resize_algorithm)
+    color_atlas, total_frames = _create_color_atlas(
+        frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, resize_algorithm)
 
     motion_vector_width = atlas_pixel_width
     if halve_motion_vector:
         motion_vector_width //= 2
-    motion_atlas, flow_directions, max_strength = _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm)
+    motion_atlas, flow_directions, max_strength = _create_motion_atlas(
+        frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm)
 
     if enable_stagger_pack:
         motion_atlas = motion_atlas_stagger_pack(motion_atlas, atlas_width, atlas_height)
@@ -136,6 +149,7 @@ def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_ski
         motion_atlas = motion_atlas_flat_pack(motion_atlas)
 
     return EncodeResult(color_atlas, motion_atlas, flow_directions, max_strength, total_frames)
+
 
 def load_frames(frame_paths):
     frames = []
@@ -160,8 +174,10 @@ def load_frames(frame_paths):
 
     return frames
 
+
 def channel_count(frame):
     return frame.shape[2] if len(frame.shape) > 2 else 1
+
 
 def _create_color_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, resize_algorithm):
     channels = channel_count(frames[0])
@@ -174,10 +190,12 @@ def _create_color_atlas(frames, atlas_width, atlas_height, frame_width, frame_he
     _blit_image(_resize(frames[0], frame_width, resize_algorithm), color_atlas, (0, 0))
     atlas_idx = 1
     for i in range(frame_skip + 1, len(frames), frame_skip + 1):
-        _blit_image(_resize(frames[i], frame_width, resize_algorithm), color_atlas, (((atlas_idx % atlas_width) * frame_width), (atlas_idx // atlas_width) * frame_height))
+        _blit_image(_resize(frames[i], frame_width, resize_algorithm), color_atlas, ((
+            (atlas_idx % atlas_width) * frame_width), (atlas_idx // atlas_width) * frame_height))
         atlas_idx += 1
 
     return color_atlas, atlas_idx
+
 
 def _prepare_optical_flow_frame(frame):
     channels = channel_count(frame)
@@ -197,6 +215,7 @@ def _prepare_optical_flow_frame(frame):
         gray = frame
 
     return gray
+
 
 def _encode_motion_vector_sidefx_labs(flow, max_strength):
     # Calculate the magnitude and angle of the flow vectors
@@ -230,6 +249,7 @@ def _encode_motion_vector_sidefx_labs(flow, max_strength):
 
     return encoded_angle, encoded_g
 
+
 def _encode_motion_vector(method, flow, max_strength):
     flow[..., 1] = -flow[..., 1]
     match method:
@@ -240,6 +260,7 @@ def _encode_motion_vector(method, flow, max_strength):
             r, g = _encode_motion_vector_sidefx_labs(flow, max_strength)
 
     return r, g
+
 
 def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm):
     height, width = frames[0].shape[:2]
@@ -288,7 +309,8 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_h
 
         # Draw optical flow directions visualization
         direction_image = _draw_optical_flow(flow, frame_batch[0], frame_batch[-1])
-        _blit_image(direction_image, flow_directions, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
+        _blit_image(direction_image, flow_directions,
+                    (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
         atlas_idx += 1
 
         flow_frames.append(flow)
@@ -331,7 +353,8 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_h
 
     # Draw optical flow directions visualization
     direction_image = _draw_optical_flow(flow, frame_batch[0], frame_batch[-1])
-    _blit_image(direction_image, flow_directions, (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
+    _blit_image(direction_image, flow_directions,
+                (((atlas_idx % atlas_width) * width), (atlas_idx // atlas_width) * height))
     atlas_idx += 1
 
     flow_frames.append(flow)
@@ -339,7 +362,8 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_h
     motion_atlas = np.zeros([atlas_height * frame_height, atlas_width * frame_width, 2], dtype=np.float32)
     for atlas_idx, flow in enumerate(flow_frames):
         flow = _resize(flow, frame_width, resize_algorithm)
-        _blit_image(flow, motion_atlas, (((atlas_idx % atlas_width) * frame_width), (atlas_idx // atlas_width) * frame_height))
+        _blit_image(flow, motion_atlas, (((atlas_idx % atlas_width) * frame_width),
+                    (atlas_idx // atlas_width) * frame_height))
 
     # Encode motion to a texture
     r, g = _encode_motion_vector(motion_vector_encoding, motion_atlas, max_strength)
@@ -348,6 +372,7 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_h
     motion_atlas[..., 1] = np.clip(g, 0, 255).astype(np.uint8)
 
     return motion_atlas, flow_directions, max_strength
+
 
 def _draw_optical_flow(flow, image, to_image, scale=1, step=16):
     h, w = image.shape[:2]
@@ -364,9 +389,10 @@ def _draw_optical_flow(flow, image, to_image, scale=1, step=16):
     vis[:, :, 1] = to_image  # Green channel
 
     for (x1, y1, u, v) in zip(x, y, fx, fy):
-        cv2.arrowedLine(vis, (x1, y1), (int(x1 + u * scale), int(y1 + v * scale)), (255, 0, 255), 1, tipLength = 0.2)
+        cv2.arrowedLine(vis, (x1, y1), (int(x1 + u * scale), int(y1 + v * scale)), (255, 0, 255), 1, tipLength=0.2)
 
     return vis
+
 
 def _blit_image(source, target, target_coords):
     channels = channel_count(source)
@@ -376,6 +402,7 @@ def _blit_image(source, target, target_coords):
         target[y:y+source_height, x:x+source_width, :] = source
     else:
         target[y:y+source_height, x:x+source_width] = source
+
 
 def _accumulate_displacement(frames, analyze_skipped_frames):
     if len(frames) < 2:
@@ -399,12 +426,14 @@ def _accumulate_displacement(frames, analyze_skipped_frames):
         accumulated_displacement[..., 1] += displacement_y
     return accumulated_displacement
 
+
 def _normalize_displacement(flow):
     height, width = flow.shape[:2]
     normalized_flow = np.zeros_like(flow)
     normalized_flow[..., 0] = np.clip(flow[..., 0] / width, -1, 1)
     normalized_flow[..., 1] = np.clip(flow[..., 1] / height, -1, 1)
     return normalized_flow
+
 
 def _update_max_strength(flow, motion_vector_encoding, max_strength):
     if motion_vector_encoding == MotionVectorEncoding.SIDEFX_LABS_R8G8:
@@ -413,6 +442,7 @@ def _update_max_strength(flow, motion_vector_encoding, max_strength):
         max_strength = max(max_strength, np.abs(flow[..., 0]).max())
         max_strength = max(max_strength, np.abs(flow[..., 1]).max())
     return max_strength
+
 
 def bgr_to_rgb(image):
     channels = channel_count(image)
