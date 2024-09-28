@@ -175,6 +175,8 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
         # Convert the width to pixels, starts at 0 index with 32
         atlas_pixel_width = 32 * (2 ** atlas_pixel_width)
 
+        extrude = self.number_extrude.value()
+
         enable_stagger_pack = self.checkbox_stagger_pack.isChecked()
         resize_alogrithm = self.combo_resize_algorithm.currentIndex()
         if resize_alogrithm == 0:
@@ -205,7 +207,7 @@ class MotionFrameApp(QMainWindow, Ui_MotionFrame):
 
         motion_vector_encoding = lib.MotionVectorEncoding(self.combo_motion_vector_encoding.currentIndex())
 
-        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip,
+        self.result = lib.encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, extrude, frame_skip,
                                        motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion, resize_alogrithm, enable_stagger_pack)
 
         self.display_image(self.result.color_atlas, self.label_color_atlas_image)

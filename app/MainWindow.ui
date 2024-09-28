@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>889</width>
+    <width>895</width>
     <height>747</height>
    </rect>
   </property>
@@ -44,7 +44,7 @@
          <x>0</x>
          <y>0</y>
          <width>499</width>
-         <height>897</height>
+         <height>921</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -563,6 +563,23 @@
              </item>
             </widget>
            </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_atlas_extrude">
+             <property name="text">
+              <string>Extrude:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="number_extrude">
+             <property name="maximum">
+              <number>128</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -602,6 +619,12 @@
            </item>
            <item row="0" column="1">
             <widget class="QSpinBox" name="number_frame_skip">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="minimum">
               <number>0</number>
              </property>
@@ -957,7 +980,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>278</width>
+               <width>284</width>
                <height>257</height>
               </rect>
              </property>
@@ -996,8 +1019,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>278</width>
-               <height>257</height>
+               <width>98</width>
+               <height>40</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
@@ -1035,8 +1058,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>278</width>
-               <height>257</height>
+               <width>98</width>
+               <height>40</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
@@ -1142,20 +1165,26 @@
   <tabstop>text_extension</tabstop>
   <tabstop>number_sequence_digits</tabstop>
   <tabstop>combo_atlas_resolution_width</tabstop>
+  <tabstop>number_extrude</tabstop>
+  <tabstop>number_atlas_width</tabstop>
+  <tabstop>number_atlas_height</tabstop>
+  <tabstop>checkbox_stagger_pack</tabstop>
   <tabstop>number_frame_skip</tabstop>
   <tabstop>checkbox_analyze_skipped_frames</tabstop>
   <tabstop>checkbox_loop</tabstop>
   <tabstop>checkbox_downsample_motion_vector</tabstop>
   <tabstop>combo_motion_vector_encoding</tabstop>
-  <tabstop>button_generate</tabstop>
-  <tabstop>button_update_frames</tabstop>
-  <tabstop>tabs_result</tabstop>
-  <tabstop>scroll_color</tabstop>
-  <tabstop>scroll_motion_vector</tabstop>
+  <tabstop>combo_resize_algorithm</tabstop>
   <tabstop>scroll_visualization</tabstop>
   <tabstop>text_motion_strength</tabstop>
   <tabstop>button_copy_motion_strength</tabstop>
   <tabstop>button_save</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>tabs_result</tabstop>
+  <tabstop>scroll_motion_vector</tabstop>
+  <tabstop>button_generate</tabstop>
+  <tabstop>button_update_frames</tabstop>
+  <tabstop>scroll_color</tabstop>
  </tabstops>
  <resources/>
  <connections/>

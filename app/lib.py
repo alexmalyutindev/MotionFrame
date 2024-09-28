@@ -125,23 +125,29 @@ def motion_atlas_flat_pack(image):
     return new_image
 
 
-def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector, resize_algorithm, enable_stagger_pack):
+def encode_atlas(frames, atlas_width, atlas_height, atlas_pixel_width, extrude, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, halve_motion_vector, resize_algorithm, enable_stagger_pack):
     # Assert that the atlas pixel width is divisible by the atlas width
     assert atlas_pixel_width % atlas_width == 0
 
     # Compute atlas frame dimention
     frame_width = atlas_pixel_width // atlas_width
+    # Cap the extrusion to not consume the whole width
+    extrude = min(extrude, (frame_width - 1) // 2)
+    # Calculate the actual frame width before extrusion
+    valid_frame_width = frame_width - (extrude * 2)
     # Make sure that the frame height matches the result of the resize operation
-    frame_height = _predict_resize_height(frames[0].shape[0], frames[0].shape[1], frame_width)
+    valid_frame_height = _predict_resize_height(frames[0].shape[0], frames[0].shape[1], valid_frame_width)
+    # Finally add the extrusion to the frame height
+    frame_height = valid_frame_height + (extrude * 2)
 
     color_atlas, total_frames = _create_color_atlas(
-        frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, resize_algorithm)
+        frames, atlas_width, atlas_height, frame_width, frame_height, extrude, frame_skip, resize_algorithm)
 
     motion_vector_width = atlas_pixel_width
     if halve_motion_vector:
         motion_vector_width //= 2
     motion_atlas, flow_directions, max_strength = _create_motion_atlas(
-        frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm)
+        frames, atlas_width, atlas_height, frame_width, frame_height, extrude, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm)
 
     if enable_stagger_pack:
         motion_atlas = motion_atlas_stagger_pack(motion_atlas, atlas_width, atlas_height)
@@ -179,7 +185,7 @@ def channel_count(frame):
     return frame.shape[2] if len(frame.shape) > 2 else 1
 
 
-def _create_color_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, resize_algorithm):
+def _create_color_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, extrude, frame_skip, resize_algorithm):
     channels = channel_count(frames[0])
 
     if channels > 1:
@@ -187,11 +193,11 @@ def _create_color_atlas(frames, atlas_width, atlas_height, frame_width, frame_he
     else:
         color_atlas = np.zeros([atlas_height * frame_height, atlas_width * frame_width], dtype=np.uint8)
 
-    _blit_image(_resize(frames[0], frame_width, resize_algorithm), color_atlas, (0, 0))
+    _blit_extrude_image(frames[0], color_atlas, (0, 0), frame_width, resize_algorithm, extrude)
     atlas_idx = 1
     for i in range(frame_skip + 1, len(frames), frame_skip + 1):
-        _blit_image(_resize(frames[i], frame_width, resize_algorithm), color_atlas, ((
-            (atlas_idx % atlas_width) * frame_width), (atlas_idx // atlas_width) * frame_height))
+        _blit_extrude_image(frames[i], color_atlas, ((
+            (atlas_idx % atlas_width) * frame_width), (atlas_idx // atlas_width) * frame_height), frame_width, resize_algorithm, extrude)
         atlas_idx += 1
 
     return color_atlas, atlas_idx
@@ -262,7 +268,7 @@ def _encode_motion_vector(method, flow, max_strength):
     return r, g
 
 
-def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm):
+def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_height, extrude, frame_skip, motion_vector_encoding, is_loop, analyze_skipped_frames, motion_vector_width, resize_algorithm):
     height, width = frames[0].shape[:2]
 
     # Image for motion vector directions
@@ -362,8 +368,8 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_h
     motion_atlas = np.zeros([atlas_height * frame_height, atlas_width * frame_width, 2], dtype=np.float32)
     for atlas_idx, flow in enumerate(flow_frames):
         flow = _resize(flow, frame_width, resize_algorithm)
-        _blit_image(flow, motion_atlas, (((atlas_idx % atlas_width) * frame_width),
-                    (atlas_idx // atlas_width) * frame_height))
+        _blit_extrude_image(flow, motion_atlas, (((atlas_idx % atlas_width) * frame_width),
+                            (atlas_idx // atlas_width) * frame_height), frame_width, resize_algorithm, extrude)
 
     # Encode motion to a texture
     r, g = _encode_motion_vector(motion_vector_encoding, motion_atlas, max_strength)
@@ -402,6 +408,39 @@ def _blit_image(source, target, target_coords):
         target[y:y+source_height, x:x+source_width, :] = source
     else:
         target[y:y+source_height, x:x+source_width] = source
+
+
+def _blit_extrude_image(source, target, target_coords, frame_width, resize_algorithm, extrude):
+    # Resize to frame width
+    source = _resize(source, frame_width - (extrude * 2), resize_algorithm)
+    _blit_image(source, target, (target_coords[0] + extrude, target_coords[1] + extrude))
+    # Extrude the inner image blit above to the surrounding pixel, with padding size of extrude variable.
+    # This is done by copying the border pixel of the inner image to the surrounding pixels.
+    if extrude > 0:
+        target_x, target_y = target_coords
+        source_height, source_width = source.shape[:2]
+
+        # Top
+        target[target_y:target_y+extrude,
+               target_x+extrude:target_x+source_width+extrude] = source[0, :]
+        # Bottom
+        target[target_y+source_height+extrude:target_y+source_height + (extrude*2),
+               target_x+extrude:target_x+source_width+extrude] = source[-1, :]
+        # Left
+        target[target_y+extrude:target_y+source_height + extrude,
+               target_x:target_x+extrude] = source[:, 0][:, np.newaxis]
+        # Right
+        target[target_y+extrude:target_y+source_height + extrude,
+               target_x+source_width+extrude:target_x+source_width+(extrude*2)] = source[:, -1][:, np.newaxis]
+        # Corners
+        target[target_y:target_y+extrude,
+               target_x:target_x+extrude] = source[0, 0]
+        target[target_y:target_y+extrude,
+               target_x+source_width+extrude:target_x+source_width+extrude*2] = source[0, -1]
+        target[target_y+source_height+extrude:target_y+source_height + extrude*2,
+               target_x:target_x+extrude] = source[-1, 0]
+        target[target_y+source_height+extrude:target_y+source_height+extrude*2,
+               target_x + source_width+extrude:target_x+source_width+extrude*2] = source[-1, -1]
 
 
 def _accumulate_displacement(frames, analyze_skipped_frames):

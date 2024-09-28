@@ -25,7 +25,7 @@ class Ui_MotionFrame(object):
     def setupUi(self, MotionFrame):
         if not MotionFrame.objectName():
             MotionFrame.setObjectName(u"MotionFrame")
-        MotionFrame.resize(889, 747)
+        MotionFrame.resize(895, 747)
         self.central = QWidget(MotionFrame)
         self.central.setObjectName(u"central")
         self.horizontalLayout = QHBoxLayout(self.central)
@@ -40,7 +40,7 @@ class Ui_MotionFrame(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 499, 897))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 499, 921))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.form_config = QFormLayout()
@@ -263,6 +263,18 @@ class Ui_MotionFrame(object):
 
         self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.number_atlas_height)
 
+        self.label_atlas_extrude = QLabel(self.groupbox_atlas)
+        self.label_atlas_extrude.setObjectName(u"label_atlas_extrude")
+
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_atlas_extrude)
+
+        self.number_extrude = QSpinBox(self.groupbox_atlas)
+        self.number_extrude.setObjectName(u"number_extrude")
+        self.number_extrude.setMaximum(128)
+        self.number_extrude.setValue(0)
+
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.number_extrude)
+
 
         self.verticalLayout.addWidget(self.groupbox_atlas)
 
@@ -283,6 +295,7 @@ class Ui_MotionFrame(object):
 
         self.number_frame_skip = QSpinBox(self.groupbox_animation)
         self.number_frame_skip.setObjectName(u"number_frame_skip")
+        self.number_frame_skip.setMinimumSize(QSize(0, 0))
         self.number_frame_skip.setMinimum(0)
         self.number_frame_skip.setMaximum(128)
         self.number_frame_skip.setValue(0)
@@ -463,7 +476,7 @@ class Ui_MotionFrame(object):
         self.scroll_color.setWidgetResizable(True)
         self.scroll_content_color = QWidget()
         self.scroll_content_color.setObjectName(u"scroll_content_color")
-        self.scroll_content_color.setGeometry(QRect(0, 0, 278, 257))
+        self.scroll_content_color.setGeometry(QRect(0, 0, 284, 257))
         self.gridLayout_2 = QGridLayout(self.scroll_content_color)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_color_atlas_image = QLabel(self.scroll_content_color)
@@ -487,7 +500,7 @@ class Ui_MotionFrame(object):
         self.scroll_motion_vector.setWidgetResizable(True)
         self.scroll_content_motion_vector = QWidget()
         self.scroll_content_motion_vector.setObjectName(u"scroll_content_motion_vector")
-        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 278, 257))
+        self.scroll_content_motion_vector.setGeometry(QRect(0, 0, 98, 40))
         self.gridLayout_4 = QGridLayout(self.scroll_content_motion_vector)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.label_motion_vector_image = QLabel(self.scroll_content_motion_vector)
@@ -511,7 +524,7 @@ class Ui_MotionFrame(object):
         self.scroll_visualization.setWidgetResizable(True)
         self.scroll_content_motion_vector_2 = QWidget()
         self.scroll_content_motion_vector_2.setObjectName(u"scroll_content_motion_vector_2")
-        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 278, 257))
+        self.scroll_content_motion_vector_2.setGeometry(QRect(0, 0, 98, 40))
         self.gridLayout_5 = QGridLayout(self.scroll_content_motion_vector_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.label_visualization_image = QLabel(self.scroll_content_motion_vector_2)
@@ -595,20 +608,26 @@ class Ui_MotionFrame(object):
         QWidget.setTabOrder(self.text_file_prefix, self.text_extension)
         QWidget.setTabOrder(self.text_extension, self.number_sequence_digits)
         QWidget.setTabOrder(self.number_sequence_digits, self.combo_atlas_resolution_width)
-        QWidget.setTabOrder(self.combo_atlas_resolution_width, self.number_frame_skip)
+        QWidget.setTabOrder(self.combo_atlas_resolution_width, self.number_extrude)
+        QWidget.setTabOrder(self.number_extrude, self.number_atlas_width)
+        QWidget.setTabOrder(self.number_atlas_width, self.number_atlas_height)
+        QWidget.setTabOrder(self.number_atlas_height, self.checkbox_stagger_pack)
+        QWidget.setTabOrder(self.checkbox_stagger_pack, self.number_frame_skip)
         QWidget.setTabOrder(self.number_frame_skip, self.checkbox_analyze_skipped_frames)
         QWidget.setTabOrder(self.checkbox_analyze_skipped_frames, self.checkbox_loop)
         QWidget.setTabOrder(self.checkbox_loop, self.checkbox_downsample_motion_vector)
         QWidget.setTabOrder(self.checkbox_downsample_motion_vector, self.combo_motion_vector_encoding)
-        QWidget.setTabOrder(self.combo_motion_vector_encoding, self.button_generate)
-        QWidget.setTabOrder(self.button_generate, self.button_update_frames)
-        QWidget.setTabOrder(self.button_update_frames, self.tabs_result)
-        QWidget.setTabOrder(self.tabs_result, self.scroll_color)
-        QWidget.setTabOrder(self.scroll_color, self.scroll_motion_vector)
-        QWidget.setTabOrder(self.scroll_motion_vector, self.scroll_visualization)
+        QWidget.setTabOrder(self.combo_motion_vector_encoding, self.combo_resize_algorithm)
+        QWidget.setTabOrder(self.combo_resize_algorithm, self.scroll_visualization)
         QWidget.setTabOrder(self.scroll_visualization, self.text_motion_strength)
         QWidget.setTabOrder(self.text_motion_strength, self.button_copy_motion_strength)
         QWidget.setTabOrder(self.button_copy_motion_strength, self.button_save)
+        QWidget.setTabOrder(self.button_save, self.scrollArea)
+        QWidget.setTabOrder(self.scrollArea, self.tabs_result)
+        QWidget.setTabOrder(self.tabs_result, self.scroll_motion_vector)
+        QWidget.setTabOrder(self.scroll_motion_vector, self.button_generate)
+        QWidget.setTabOrder(self.button_generate, self.button_update_frames)
+        QWidget.setTabOrder(self.button_update_frames, self.scroll_color)
 
         self.retranslateUi(MotionFrame)
 
@@ -638,6 +657,7 @@ class Ui_MotionFrame(object):
         self.label_stagger_pack.setText(QCoreApplication.translate("MotionFrame", u"Stagger Pack:", None))
 
 
+        self.label_atlas_extrude.setText(QCoreApplication.translate("MotionFrame", u"Extrude:", None))
         self.groupbox_animation.setTitle(QCoreApplication.translate("MotionFrame", u"Animation", None))
         self.label_frame_skip.setText(QCoreApplication.translate("MotionFrame", u"Frame Skip:", None))
         self.label_analyze_skipped_frames.setText(QCoreApplication.translate("MotionFrame", u"Analyze Skipped Frames:", None))
