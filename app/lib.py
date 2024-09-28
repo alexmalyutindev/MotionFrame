@@ -371,6 +371,12 @@ def _create_motion_atlas(frames, atlas_width, atlas_height, frame_width, frame_h
         _blit_extrude_image(flow, motion_atlas, (((atlas_idx % atlas_width) * frame_width),
                             (atlas_idx // atlas_width) * frame_height), frame_width, resize_algorithm, extrude)
 
+    # Resize the motion atlas to the desired width if needed, usually for halving the motion vector width.
+    # Note that this is done separately from the resize, extrude, and blit operation above, since the motion vector
+    # downsample operation should also downsample the extruded pixels, so the UV matches with the color atlas.
+    if motion_vector_width != motion_atlas.shape[1]:
+        motion_atlas = _resize(motion_atlas, motion_vector_width, resize_algorithm)
+
     # Encode motion to a texture
     r, g = _encode_motion_vector(motion_vector_encoding, motion_atlas, max_strength)
     motion_atlas = np.zeros([motion_atlas.shape[0], motion_atlas.shape[1], 2], dtype=np.uint8)
