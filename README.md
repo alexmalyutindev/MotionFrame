@@ -2,8 +2,8 @@
 
 |Fade Blend|Motion Blend|
 -----------|-------------
-|![Smoke Fade](https://github.com/user-attachments/assets/579d1eea-abbd-48f6-8821-f535de6f2dab)|![Smoke Motion](https://github.com/user-attachments/assets/365c401e-5eee-4fdb-b2b9-776bb8b14c73)|
 |![Explosion Fade](https://github.com/user-attachments/assets/1591cd44-1326-453d-b787-4e6373fb3457)|![Explosion Motion](https://github.com/user-attachments/assets/18a4fe4c-93c9-45e6-bc54-c231954f5b39)|
+|![Smoke Fade](https://github.com/user-attachments/assets/6d967d60-6d7d-47c8-858f-d47b69ca4cf6)|![Smoke Motion](https://github.com/user-attachments/assets/1c4a161e-8432-4bdc-951e-192e98587a32)|
 
 ## Overview
 
