@@ -1,5 +1,10 @@
 # MotionFrame
 
+|Fade Blend|Motion Blend|
+-----------|-------------
+|![Smoke Fade](https://github.com/user-attachments/assets/579d1eea-abbd-48f6-8821-f535de6f2dab)|![Smoke Motion](https://github.com/user-attachments/assets/365c401e-5eee-4fdb-b2b9-776bb8b14c73)|
+|![Explosion Fade](https://github.com/user-attachments/assets/1591cd44-1326-453d-b787-4e6373fb3457)|![Explosion Motion](https://github.com/user-attachments/assets/18a4fe4c-93c9-45e6-bc54-c231954f5b39)|
+
 ## Overview
 
 **MotionFrame** is a Python-based application designed to analyze flipbook images and generate motion vector flipbook textures. These textures are particularly useful in visual effects (VFX) to enhance the inter-frame blending of flipbook animations. MotionFrame is compatible with both macOS and Windows operating systems and uses OpenCV to generate optical flow.
