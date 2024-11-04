@@ -4,3 +4,4 @@ sample
 *.app
 *.dist
 *.plist
+.idea
