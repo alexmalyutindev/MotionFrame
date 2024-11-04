@@ -1,55 +1,103 @@
 # MotionFrame
 
-|Fade Blend|Motion Blend|
------------|-------------
-|![Explosion Fade](https://github.com/user-attachments/assets/1591cd44-1326-453d-b787-4e6373fb3457)|![Explosion Motion](https://github.com/user-attachments/assets/18a4fe4c-93c9-45e6-bc54-c231954f5b39)|
-|![Smoke Fade](https://github.com/user-attachments/assets/6d967d60-6d7d-47c8-858f-d47b69ca4cf6)|![Smoke Motion](https://github.com/user-attachments/assets/1c4a161e-8432-4bdc-951e-192e98587a32)|
+**MotionFrame** is a Python tool designed to analyze flipbook images and generate motion vector textures for use with motion blend shaders.
 
-## Overview
+The problem with flipbook textures is that the texture size becomes very large if you want smooth animation. The motion blend technique makes animation smoother with fewer frames by providing an extra motion vector texture.
 
-**MotionFrame** is a Python-based application designed to analyze flipbook images and generate motion vector flipbook textures. These textures are particularly useful in visual effects (VFX) to enhance the inter-frame blending of flipbook animations. MotionFrame is compatible with both macOS and Windows operating systems and uses OpenCV to generate optical flow.
+## Sample Renders
 
-## Features
+| Fade Blend                                                                                         | Motion Blend                                                                                         |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| ![Explosion Fade](https://github.com/user-attachments/assets/00159a36-f49e-4593-9221-0b4c80ca4113) | ![Explosion Motion](https://github.com/user-attachments/assets/239eac78-90b2-4018-bd08-68a8148c7642) |
+| ![Smoke Fade](https://github.com/user-attachments/assets/e20742f8-35bc-403d-8da0-a7d2397d7e89)     | ![Smoke Motion](https://github.com/user-attachments/assets/c9e847f7-06a3-452e-b592-bc7e0b674782)     |
+## Key Features
 
-- **Language Support**: English and Japanese.
-- **File Input**: Customizable directory, file prefix, extension, and sequence digits. Supports drag and drop for files and folders to auto-detect settings.
-- **Atlas**: Configure pixel width, columns (X), rows (Y), and enable Stagger Pack.
-- **Animation**: Frame skipping with optional analysis of skipped frames and a looping option.
-- **Export**: Downsample motion vector, choose motion vector encoding format, and select resize algorithm.
-- **Motion Vector Encoding**: Supports "R8G8 Remapped to 0-1" and "SideFX Labs R8G8 Encoding".
-- **Visualization**: View color, motion vector, and other visual aspects of the generated textures.
+- **GUI Frontend**
+- **Cross-Platform**:
+  - Supports macOS, Windows, and likely Linux.
+- **Skipped Frame Analysis**:
+  - Enhances motion analysis precision with high frame rate input.
+  - Analyzes every input frame and accumulates skipped frames into each motion vector frame.
+  - Ideal for animations with fast movements, which are challenging for image-based motion analysis.
+- **Motion Vector [Stagger Packing](https://realtimevfx.com/t/flipbook-texture-packing-atlas-super-pack-and-stagger-pack/5609)**:
+  - Motion vector textures use 2 channels, but this may not be optimal for some platforms.
+  - Packing them into 4 channels reduces texture size by half and compresses well with formats like ASTC.
+- **Color Atlas Packing**
+- **Motion Visualization**
+- **Free and Open Source**
+
+See the [reference shader implementation (MIT)](https://github.com/aki-null/UnityFlipbookMotionBlending) for shaders to render this.
+
+## Installation
+
+### Self Contained Binary
+
+WIP
+
+### Setup
+
+#### Windows
+
+```bash
+git clone https://github.com/aki-null/MotionFrame.git
+cd MotionFrame
+python -m venv .venv
+source .venv/Scripts/activate
+cd app
+pip install -r requirements.txt
+python3 MotionFrame.py
+```
+
+#### macOS
+
+```bash
+git clone https://github.com/aki-null/MotionFrame.git
+cd MotionFrame
+python -m venv .venv
+source .venv/bin/activate
+cd app
+pip install -r requirements.txt
+python3 MotionFrame.py
+```
 
 ## Usage
 
-### File Input
+![Main Window](https://github.com/user-attachments/assets/d44658e8-3a2d-4908-afb1-a22fbbed1fde)
 
-1. **Directory**: Browse and select the directory containing the flipbook images.
-2. **File Prefix**: Enter the common prefix of the flipbook image files.
-3. **Extension**: Specify the file extension (e.g., `tga`).
-4. **Sequence Digits**: Set the number of digits used in the file sequence numbering.
-5. **Drag and Drop**: You can drag and drop a single file or an entire folder to automatically configure the file input settings.
+- Drag and drop image sequence file
+	- Folder works too
+	- The tool tries its best to determine how your image sequence file names are formatted
+- Configure options
+	- Frame skips are important if your input frame count is not exactly the same as the desired output frames
+	- The output motion vector quality improves if you can provide more input frames
+- Generate
+	- The tabs on the right displays various output
+	- Visualization tab shows how the tool interpreted the motion in each frame with arrows
+- Save to files
+	- The output is in TGA
+	- Color, motion vector, and JSON metadata are exported
 
-### Atlas Configuration
+## License
 
-1. **Pixel Width**: Set the width of the atlas in pixels.
-2. **Columns (X)**: Define the number of columns in the atlas.
-3. **Rows (Y)**: Define the number of rows in the atlas.
-4. **Stagger Pack**: Enable or disable staggered packing of the atlas. When enabled, the RG channels store the even frames, and the BA channels store the odd frames.
+[GPL v3.0](https://www.gnu.org/licenses/gpl-3.0.txt)
 
-### Animation Settings
+- Downloading this tool and using the generated texture for your game doesn't contaminate your software with GPL v3.0 license. I would love to be credited however :)
+## Notes
 
-1. **Frame Skip**: Set the number of frames to skip during analysis.
-2. **Analyze Skipped Frames**: Enable or disable analysis of skipped frames.
-3. **Loop**: Enable or disable looping of the animation.
+- Make sure you import the normal texture as linear (non-sRGB) in your game engine
+	- In Unity, uncheck sRGB (Color Textire) in texture settings
+- The output includes a JSON file which contains some metadata that are useful for various shader parameters
+	- You can take a look at the JSON file if you forget some properties of the output like the motion strength and total number of frames
 
-### Export Options
+## Appendix
 
-1. **Downsample Motion Vector**: Enable or disable downsampling of the motion vector.
-2. **Motion Vector Encoding**: Choose the encoding format for the motion vector: "R8G8 Remapped to 0-1" or "SideFX Labs R8G8 Encoding".
-3. **Resize Algorithm**: Select the algorithm used for resizing (e.g., `Cubic`).
+Textures used to render the sample animations.
 
-### Generating and Saving
+|Color Atlas|Motion Atlas|
+|-----------|------------|
+|![Explosion Color Atlas](https://github.com/user-attachments/assets/f68db0fe-9348-4ae3-bffa-cb2839ddc5a8)|![Explosion Motion Atlas](https://github.com/user-attachments/assets/5354ece8-0127-43a0-8b90-a9d358bab4e5)|
+|![Smoke Color Atlas](https://github.com/user-attachments/assets/8bcb4457-e245-4f93-a1aa-4ec88763777f)|![Smoke Motion Atlas](https://github.com/user-attachments/assets/66e98695-c152-40ad-9aad-8b098f963d09)|
 
-- **Generate**: Click to generate the motion vector flipbook texture based on the provided settings.
-- **Save**: Save the generated texture to the desired location.
+## References
 
+- <https://www.klemenlozar.com/frame-blending-with-motion-vectors/>
