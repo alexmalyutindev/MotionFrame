@@ -37,6 +37,17 @@ jobs:
           onefile: true
           enable-plugins: pyside6
 
+      - uses: skymatic/code-sign-action@v3.0.0
+        with:
+          certificate: '${{ secrets.CERTIFICATE }}'
+          password: '${{ secrets.PASSWORD }}'
+          certificatesha1: '${{ secrets.CERTHASH }}'
+          certificatename: '${{ secrets.CERTNAME }}'
+          description: 'MotionFrame'
+          timestampUrl: 'http://timestamp.digicert.com'
+          folder: 'build'
+          recursive: true
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
